@@ -85,33 +85,6 @@
       color: #2b6cb0;
     }
 
-    .majors-section {
-      padding-top: 1.25rem;
-      border-top: 1px solid #e2e8f0;
-    }
-
-    .majors-section h2 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #2d3748;
-      margin-bottom: 0.75rem;
-    }
-
-    .major-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .major-tag {
-      background: #edf2f7;
-      color: #4a5568;
-      font-size: 0.85rem;
-      font-weight: 500;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-    }
-
     .admissions-section {
       padding-top: 1.25rem;
       border-top: 1px solid #e2e8f0;
@@ -132,9 +105,6 @@
     }
 
     .factor-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       padding: 0.5rem 0;
       border-bottom: 1px solid #f0f4f8;
       font-size: 0.875rem;
@@ -142,8 +112,30 @@
 
     .factor-row:last-child { border-bottom: none; }
 
+    .factor-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .factor-name { color: #4a5568; }
     .factor-row.is-very-important .factor-name { color: #2d3748; font-weight: 600; }
+
+    .your-stat {
+      font-size: 0.78rem;
+      color: #718096;
+      margin-top: 0.25rem;
+    }
+
+    .your-stat strong { color: #2b6cb0; font-weight: 600; }
+
+    .profile-cta {
+      font-size: 0.78rem;
+      color: #a0aec0;
+      margin-top: 0.5rem;
+    }
+
+    .profile-cta a { color: #2b6cb0; font-weight: 600; }
 
     .factor-rating {
       font-size: 0.75rem;
@@ -182,13 +174,9 @@
       </div>
       <div class="stat-row">
         <div>
-          <div class="stat-label">Minimum GPA</div>
+          <div class="stat-label">GPA Range (Middle 50%)</div>
           <div class="stat-value" id="college-gpa"></div>
         </div>
-      </div>
-      <div class="majors-section">
-        <h2>Majors Offered</h2>
-        <div class="major-tags" id="college-majors"></div>
       </div>
       <div class="admissions-section">
         <h2>What This School Considers in Admissions</h2>
@@ -199,6 +187,43 @@
   </div>
 
   <script>
+    const PROFILE_KEY = "collegeMatcherProfile";
+
+    function loadStudentProfile() {
+      const saved = localStorage.getItem(PROFILE_KEY);
+      if (!saved) return null;
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
+
+    function statForFactor(factor, profile) {
+      if (!profile) return null;
+
+      switch (factor) {
+        case "Academic GPA":
+          return profile.gpa ? `GPA: ${profile.gpa}` : null;
+        case "Standardized test scores":
+          return profile.testType && profile.testScore
+            ? `${profile.testType}: ${profile.testScore}`
+            : null;
+        case "Class rank":
+          return profile.classRank || null;
+        case "Extracurricular activities":
+          return profile.extracurriculars
+            ? `${profile.extracurriculars} activities listed`
+            : null;
+        case "Rigor of secondary school record":
+          return profile.rigorCourses
+            ? `${profile.rigorCourses} AP/IB/Honors courses`
+            : null;
+        default:
+          return null;
+      }
+    }
+
     async function loadCollege() {
       const statusMsg = document.getElementById("status-msg");
       const slug = window.location.pathname.split("/").pop();
@@ -218,15 +243,8 @@
         document.getElementById("college-name").textContent = college.name;
         document.getElementById("college-location").textContent = college.location;
         document.getElementById("college-type").textContent = college.type;
-        document.getElementById("college-gpa").textContent = college.min_gpa.toFixed(1);
-
-        const majorsContainer = document.getElementById("college-majors");
-        college.majors.forEach(major => {
-          const tag = document.createElement("span");
-          tag.className = "major-tag";
-          tag.textContent = major.trim();
-          majorsContainer.appendChild(tag);
-        });
+        document.getElementById("college-gpa").textContent =
+          `${college.gpa_25.toFixed(2)}–${college.gpa_75.toFixed(2)}`;
 
         const ratingClasses = {
           "Very Important": "rating-very-important",
@@ -235,11 +253,17 @@
           "Not Considered": "rating-not-considered",
         };
 
+        const profile = loadStudentProfile();
+        let shownAnyStat = false;
+
         const admissionsContainer = document.getElementById("college-admissions");
         Object.entries(college.admissions_factors).forEach(([factor, rating]) => {
           const row = document.createElement("div");
           row.className = "factor-row";
           if (rating === "Very Important") row.classList.add("is-very-important");
+
+          const top = document.createElement("div");
+          top.className = "factor-row-top";
 
           const name = document.createElement("span");
           name.className = "factor-name";
@@ -249,9 +273,29 @@
           badge.className = `factor-rating ${ratingClasses[rating] || "rating-considered"}`;
           badge.textContent = rating;
 
-          row.append(name, badge);
+          top.append(name, badge);
+          row.append(top);
+
+          const stat = statForFactor(factor, profile);
+          if (stat) {
+            shownAnyStat = true;
+            const statLine = document.createElement("div");
+            statLine.className = "your-stat";
+            statLine.innerHTML = `Your profile — <strong>${stat}</strong>`;
+            row.append(statLine);
+          }
+
           admissionsContainer.appendChild(row);
         });
+
+        if (!shownAnyStat) {
+          const cta = document.createElement("p");
+          cta.className = "profile-cta";
+          cta.innerHTML = profile
+            ? "Fill out your Academic Profile on the search page to see how your stats line up here."
+            : 'Save your profile on the <a href="/">search page</a> to see how your stats compare to what this school looks for.';
+          admissionsContainer.appendChild(cta);
+        }
 
         document.title = `${college.name} – College Matcher`;
         statusMsg.style.display = "none";

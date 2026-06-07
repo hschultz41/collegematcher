@@ -4,6 +4,7 @@ import os
 import re
 
 app = Flask(__name__)
+app.json.sort_keys = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,19 +16,33 @@ def slugify(name):
     return slug
 
 
-def parse_admissions_factors(value):
-    factors = {}
-    for pair in value.split("|"):
-        factor, _, rating = pair.partition(":")
-        factors[factor.strip()] = rating.strip()
-    return factors
+# Maps each colleges.csv rating column to its Common Data Set Section C7 factor name.
+# Ratings are stored as short codes (VI/I/C/NC) in the CSV for easy editing.
+RATING_CODES = {"VI": "Very Important", "I": "Important", "C": "Considered", "NC": "Not Considered"}
+
+FACTOR_COLUMNS = {
+    "rigor_rating": "Rigor of secondary school record",
+    "class_rank_rating": "Class rank",
+    "gpa_rating": "Academic GPA",
+    "test_scores_rating": "Standardized test scores",
+    "essay_rating": "Application essay",
+    "recommendations_rating": "Recommendations",
+    "extracurriculars_rating": "Extracurricular activities",
+    "character_rating": "Character/personal qualities",
+}
+
+
+def build_admissions_factors(row):
+    return {
+        factor_name: RATING_CODES.get(row[column], "Considered")
+        for column, factor_name in FACTOR_COLUMNS.items()
+    }
 
 
 colleges_df = pd.read_csv(os.path.join(BASE_DIR, "colleges.csv"))
-colleges_df["majors_list"] = colleges_df["majors"].str.split(",")
 colleges_df["slug"] = colleges_df["name"].apply(slugify)
-colleges_df["admissions_factors_dict"] = colleges_df["admissions_factors"].apply(parse_admissions_factors)
-colleges_df = colleges_df.sort_values("min_gpa", ascending=False).reset_index(drop=True)
+colleges_df["admissions_factors_dict"] = colleges_df.apply(build_admissions_factors, axis=1)
+colleges_df = colleges_df.sort_values("gpa_25", ascending=False).reset_index(drop=True)
 
 LOCATIONS = ["Any", "West", "Northeast", "Midwest", "Southeast", "South"]
 
@@ -46,25 +61,17 @@ def match_colleges():
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid GPA"}), 400
 
-    major = data.get("major", "").strip()
     location = data.get("location", "Any").strip()
 
     if not (0.0 <= gpa <= 4.0):
         return jsonify({"error": "GPA must be between 0.0 and 4.0"}), 400
 
-    results = colleges_df[colleges_df["min_gpa"] <= gpa].copy()
+    results = colleges_df[colleges_df["gpa_25"] <= gpa].copy()
 
     if location and location != "Any":
         results = results[results["location"] == location]
 
-    if major:
-        results = results[
-            results["majors_list"].apply(
-                lambda majors: any(major.lower() in m.lower() for m in majors)
-            )
-        ]
-
-    matches = results[["name", "slug", "location", "min_gpa", "majors", "type"]].to_dict(
+    matches = results[["name", "slug", "location", "gpa_25", "gpa_75", "type"]].to_dict(
         orient="records"
     )
     return jsonify({"matches": matches, "total": len(matches)})
@@ -88,8 +95,8 @@ def college_detail(slug):
         "name": college["name"],
         "slug": college["slug"],
         "location": college["location"],
-        "min_gpa": college["min_gpa"],
-        "majors": college["majors_list"],
+        "gpa_25": college["gpa_25"],
+        "gpa_75": college["gpa_75"],
         "type": college["type"],
         "admissions_factors": college["admissions_factors_dict"],
     })
@@ -97,10 +104,7 @@ def college_detail(slug):
 
 @app.route("/api/options")
 def get_options():
-    all_majors = set()
-    for majors in colleges_df["majors_list"]:
-        all_majors.update(m.strip() for m in majors)
-    return jsonify({"locations": LOCATIONS, "majors": sorted(all_majors)})
+    return jsonify({"locations": LOCATIONS})
 
 
 if __name__ == "__main__":
