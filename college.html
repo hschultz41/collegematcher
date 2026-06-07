@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College Details</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      max-width: 640px;
+      margin: 0 auto 1rem;
+      color: #2b6cb0;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+
+    .wrapper {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+    }
+
+    .badge-location { background: #ebf8ff; color: #2b6cb0; }
+    .badge-type { background: #f0fff4; color: #276749; }
+
+    .stat-row {
+      display: flex;
+      gap: 2rem;
+      padding: 1.25rem 0;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: #a0aec0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2b6cb0;
+    }
+
+    .majors-section {
+      padding-top: 1.25rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .majors-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0.75rem;
+    }
+
+    .major-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .major-tag {
+      background: #edf2f7;
+      color: #4a5568;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+    }
+
+    .admissions-section {
+      padding-top: 1.25rem;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 1.25rem;
+    }
+
+    .admissions-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0.25rem;
+    }
+
+    .admissions-note {
+      font-size: 0.78rem;
+      color: #a0aec0;
+      margin-bottom: 0.85rem;
+    }
+
+    .factor-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f0f4f8;
+      font-size: 0.875rem;
+    }
+
+    .factor-row:last-child { border-bottom: none; }
+
+    .factor-name { color: #4a5568; }
+    .factor-row.is-very-important .factor-name { color: #2d3748; font-weight: 600; }
+
+    .factor-rating {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .rating-very-important {
+      background: #c53030;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 1px 4px rgba(197, 48, 48, 0.35);
+    }
+    .rating-important { background: #ed8936; color: white; font-weight: 700; }
+    .rating-considered { background: #ebf8ff; color: #2b6cb0; font-weight: 600; }
+    .rating-not-considered { background: #f7fafc; color: #cbd5e0; font-weight: 500; }
+
+    #status-msg {
+      text-align: center;
+      color: #718096;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <a href="/" class="back-link">&larr; Back to search</a>
+    <p id="status-msg">Loading college details…</p>
+    <div class="card" id="college-card" style="display:none">
+      <h1 id="college-name"></h1>
+      <div class="meta">
+        <span class="badge badge-location" id="college-location"></span>
+        <span class="badge badge-type" id="college-type"></span>
+      </div>
+      <div class="stat-row">
+        <div>
+          <div class="stat-label">Minimum GPA</div>
+          <div class="stat-value" id="college-gpa"></div>
+        </div>
+      </div>
+      <div class="majors-section">
+        <h2>Majors Offered</h2>
+        <div class="major-tags" id="college-majors"></div>
+      </div>
+      <div class="admissions-section">
+        <h2>What This School Considers in Admissions</h2>
+        <p class="admissions-note">From the school's Common Data Set, Section C7 (relative importance of academic and nonacademic factors)</p>
+        <div id="college-admissions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadCollege() {
+      const statusMsg = document.getElementById("status-msg");
+      const slug = window.location.pathname.split("/").pop();
+
+      try {
+        const res = await fetch(`/api/college/${slug}`);
+
+        if (!res.ok) {
+          statusMsg.textContent = res.status === 404
+            ? "College not found."
+            : `Server error (${res.status}). Check the terminal for details.`;
+          return;
+        }
+
+        const college = await res.json();
+
+        document.getElementById("college-name").textContent = college.name;
+        document.getElementById("college-location").textContent = college.location;
+        document.getElementById("college-type").textContent = college.type;
+        document.getElementById("college-gpa").textContent = college.min_gpa.toFixed(1);
+
+        const majorsContainer = document.getElementById("college-majors");
+        college.majors.forEach(major => {
+          const tag = document.createElement("span");
+          tag.className = "major-tag";
+          tag.textContent = major.trim();
+          majorsContainer.appendChild(tag);
+        });
+
+        const ratingClasses = {
+          "Very Important": "rating-very-important",
+          "Important": "rating-important",
+          "Considered": "rating-considered",
+          "Not Considered": "rating-not-considered",
+        };
+
+        const admissionsContainer = document.getElementById("college-admissions");
+        Object.entries(college.admissions_factors).forEach(([factor, rating]) => {
+          const row = document.createElement("div");
+          row.className = "factor-row";
+          if (rating === "Very Important") row.classList.add("is-very-important");
+
+          const name = document.createElement("span");
+          name.className = "factor-name";
+          name.textContent = factor;
+
+          const badge = document.createElement("span");
+          badge.className = `factor-rating ${ratingClasses[rating] || "rating-considered"}`;
+          badge.textContent = rating;
+
+          row.append(name, badge);
+          admissionsContainer.appendChild(row);
+        });
+
+        document.title = `${college.name} – College Matcher`;
+        statusMsg.style.display = "none";
+        document.getElementById("college-card").style.display = "block";
+      } catch {
+        statusMsg.textContent = "Could not reach the server. Is python3 app.py running?";
+      }
+    }
+
+    loadCollege();
+  </script>
+</body>
+</html>

@@ -82,6 +82,35 @@
     button:hover { background: #2c5282; }
     button:disabled { background: #a0aec0; cursor: not-allowed; }
 
+    .academic-profile {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .academic-profile summary {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #2b6cb0;
+      cursor: pointer;
+    }
+
+    .academic-profile-note {
+      font-size: 0.78rem;
+      color: #a0aec0;
+      margin: 0.5rem 0 1rem;
+    }
+
+    .academic-profile .form-group:last-child { margin-bottom: 0; }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .form-row .form-group { flex: 1; }
+
     .checkbox-group { margin-bottom: 1rem; }
 
     .checkbox-label {
@@ -143,9 +172,17 @@
       padding: 1.25rem 1.5rem;
       margin-bottom: 1rem;
       display: flex;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.15s, transform 0.15s;
       justify-content: space-between;
       align-items: flex-start;
       gap: 1rem;
+    }
+
+    .college-card:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      transform: translateY(-1px);
     }
 
     .college-info h3 {
@@ -228,6 +265,47 @@
           <option value="Any">Any location</option>
         </select>
       </div>
+      <details class="academic-profile">
+        <summary>Academic Profile (optional)</summary>
+        <p class="academic-profile-note">
+          These reflect Common Data Set Section C7 factors — saved with your profile for your own reference.
+        </p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="test-type">Standardized Test</label>
+            <select id="test-type">
+              <option value="">None taken</option>
+              <option value="SAT">SAT</option>
+              <option value="ACT">ACT</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="test-score">Score</label>
+            <input type="number" id="test-score" min="1" max="1600" placeholder="e.g. 1450" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="class-rank">Class Rank</label>
+          <select id="class-rank">
+            <option value="">Prefer not to say</option>
+            <option value="Top 10%">Top 10%</option>
+            <option value="Top 25%">Top 25%</option>
+            <option value="Top 50%">Top 50%</option>
+            <option value="Bottom 50%">Bottom 50%</option>
+            <option value="Not ranked">Not ranked</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="extracurriculars">Extracurricular Activities</label>
+            <input type="number" id="extracurriculars" min="0" max="50" placeholder="e.g. 4" />
+          </div>
+          <div class="form-group">
+            <label for="rigor-courses">AP / IB / Honors Courses</label>
+            <input type="number" id="rigor-courses" min="0" max="50" placeholder="e.g. 6" />
+          </div>
+        </div>
+      </details>
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
           <input type="checkbox" id="save-profile" />
@@ -264,6 +342,11 @@
       document.getElementById("gpa").value = profile.gpa ?? "";
       document.getElementById("major").value = profile.major ?? "";
       document.getElementById("location").value = profile.location ?? "Any";
+      document.getElementById("test-type").value = profile.testType ?? "";
+      document.getElementById("test-score").value = profile.testScore ?? "";
+      document.getElementById("class-rank").value = profile.classRank ?? "";
+      document.getElementById("extracurriculars").value = profile.extracurriculars ?? "";
+      document.getElementById("rigor-courses").value = profile.rigorCourses ?? "";
       document.getElementById("save-profile").checked = true;
       showProfileMessage();
     }
@@ -284,8 +367,8 @@
       msg.style.display = "block";
     }
 
-    function saveProfile(gpa, major, location) {
-      localStorage.setItem(PROFILE_KEY, JSON.stringify({ gpa, major, location }));
+    function saveProfile(profile) {
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
     }
 
     async function loadOptions() {
@@ -322,9 +405,14 @@
       const gpa = document.getElementById("gpa").value;
       const major = document.getElementById("major").value;
       const location = document.getElementById("location").value;
+      const testType = document.getElementById("test-type").value;
+      const testScore = document.getElementById("test-score").value;
+      const classRank = document.getElementById("class-rank").value;
+      const extracurriculars = document.getElementById("extracurriculars").value;
+      const rigorCourses = document.getElementById("rigor-courses").value;
 
       if (document.getElementById("save-profile").checked) {
-        saveProfile(gpa, major, location);
+        saveProfile({ gpa, major, location, testType, testScore, classRank, extracurriculars, rigorCourses });
         showProfileMessage();
       } else {
         localStorage.removeItem(PROFILE_KEY);
@@ -382,8 +470,9 @@
       header.textContent = `${total} college${total !== 1 ? "s" : ""} matched your profile`;
 
       matches.forEach(college => {
-        const card = document.createElement("div");
+        const card = document.createElement("a");
         card.className = "college-card";
+        card.href = `/college/${college.slug}`;
         card.innerHTML = `
           <div class="college-info">
             <h3>${college.name}</h3>
