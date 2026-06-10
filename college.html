@@ -245,6 +245,10 @@
   <script>
     const PROFILE_KEY = "collegeMatcherProfile";
 
+    // High school types that get a rigor "context bonus" on the server also get
+    // extra context when deciding whether to submit a below-range test score.
+    const UNDERRESOURCED_HIGH_SCHOOL_TYPES = ["Rural / Small Public School", "Underserved / Title I School"];
+
     function loadStudentProfile() {
       const saved = localStorage.getItem(PROFILE_KEY);
       if (!saved) return null;
@@ -304,6 +308,22 @@
         if (score >= lo) {
           recommendations.push(
             `submit your ${profile.testType} score of ${profile.testScore}, since it falls within or above this school's typical range for admitted students`
+          );
+        } else if (UNDERRESOURCED_HIGH_SCHOOL_TYPES.includes(profile.highSchoolType)) {
+          recommendations.push(
+            `treat submitting your ${profile.testType} score of ${profile.testScore} as a judgment call — it's below this school's typical range, but admissions readers may weigh it in the context of your school's resources`
+          );
+        }
+      }
+
+      if (!college.test_optional && profile.testType && profile.testScore) {
+        const score = parseFloat(profile.testScore);
+        const [lo, hi] = profile.testType === "SAT"
+          ? [college.sat_25, college.sat_75]
+          : [college.act_25, college.act_75];
+        if (score < lo) {
+          recommendations.push(
+            `consider retaking the ${profile.testType} — your score of ${profile.testScore} is below this school's typical range of ${lo}–${hi}, and this school requires test scores`
           );
         }
       }
