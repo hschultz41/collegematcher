@@ -62,10 +62,13 @@
 
     .badge-location { background: #ebf8ff; color: #2b6cb0; }
     .badge-type { background: #f0fff4; color: #276749; }
+    .badge-test-optional { background: #faf5ff; color: #6b46c1; }
+    .badge-test-required { background: #fffaf0; color: #b7791f; }
 
     .stat-row {
       display: flex;
-      gap: 2rem;
+      flex-wrap: wrap;
+      gap: 1.5rem 2rem;
       padding: 1.25rem 0;
       border-top: 1px solid #e2e8f0;
     }
@@ -84,6 +87,15 @@
       font-weight: 700;
       color: #2b6cb0;
     }
+
+    .stat-value-sm {
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+
+    .match-high { color: #2f855a; }
+    .match-medium { color: #c05621; }
+    .match-low { color: #c53030; }
 
     .admissions-section {
       padding-top: 1.25rem;
@@ -171,11 +183,21 @@
       <div class="meta">
         <span class="badge badge-location" id="college-location"></span>
         <span class="badge badge-type" id="college-type"></span>
+        <span class="badge badge-test-optional" id="college-test-optional" style="display:none">Test Optional</span>
+        <span class="badge badge-test-required" id="college-test-required" style="display:none">Test Required</span>
       </div>
       <div class="stat-row">
         <div>
           <div class="stat-label">GPA Range (Middle 50%)</div>
           <div class="stat-value" id="college-gpa"></div>
+        </div>
+        <div>
+          <div class="stat-label">Test Score Range (Middle 50%)</div>
+          <div class="stat-value stat-value-sm" id="college-test-scores"></div>
+        </div>
+        <div id="match-score-block" style="display:none">
+          <div class="stat-label">Your Match Score</div>
+          <div class="stat-value" id="college-match-score"></div>
         </div>
       </div>
       <div class="admissions-section">
@@ -199,16 +221,29 @@
       }
     }
 
-    function statForFactor(factor, profile) {
+    function statForFactor(factor, profile, college) {
       if (!profile) return null;
 
       switch (factor) {
-        case "Academic GPA":
-          return profile.gpa ? `GPA: ${profile.gpa}` : null;
-        case "Standardized test scores":
-          return profile.testType && profile.testScore
-            ? `${profile.testType}: ${profile.testScore}`
-            : null;
+        case "Academic GPA": {
+          if (!profile.gpa) return null;
+          const gpa = parseFloat(profile.gpa);
+          let rangeNote = "within this school's typical range";
+          if (gpa > college.gpa_75) rangeNote = "above this school's typical range";
+          else if (gpa < college.gpa_25) rangeNote = "below this school's typical range";
+          return `GPA: ${profile.gpa} (${rangeNote})`;
+        }
+        case "Standardized test scores": {
+          if (!profile.testType || !profile.testScore) return null;
+          const score = parseFloat(profile.testScore);
+          const [lo, hi] = profile.testType === "SAT"
+            ? [college.sat_25, college.sat_75]
+            : [college.act_25, college.act_75];
+          let rangeNote = "within this school's typical range";
+          if (score > hi) rangeNote = "above this school's typical range";
+          else if (score < lo) rangeNote = "below this school's typical range";
+          return `${profile.testType}: ${profile.testScore} (${rangeNote})`;
+        }
         case "Class rank":
           return profile.classRank || null;
         case "Extracurricular activities":
@@ -227,9 +262,19 @@
     async function loadCollege() {
       const statusMsg = document.getElementById("status-msg");
       const slug = window.location.pathname.split("/").pop();
+      const profile = loadStudentProfile();
 
       try {
-        const res = await fetch(`/api/college/${slug}`);
+        const params = new URLSearchParams();
+        if (profile) {
+          Object.entries(profile).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== "") {
+              params.set(key, value);
+            }
+          });
+        }
+        const query = params.toString();
+        const res = await fetch(`/api/college/${slug}${query ? `?${query}` : ""}`);
 
         if (!res.ok) {
           statusMsg.textContent = res.status === 404
@@ -243,8 +288,27 @@
         document.getElementById("college-name").textContent = college.name;
         document.getElementById("college-location").textContent = college.location;
         document.getElementById("college-type").textContent = college.type;
+        if (college.test_optional) {
+          document.getElementById("college-test-optional").style.display = "inline-block";
+        } else {
+          document.getElementById("college-test-required").style.display = "inline-block";
+        }
         document.getElementById("college-gpa").textContent =
           `${college.gpa_25.toFixed(2)}–${college.gpa_75.toFixed(2)}`;
+        document.getElementById("college-test-scores").textContent =
+          `SAT ${college.sat_25}–${college.sat_75} / ACT ${college.act_25}–${college.act_75}`;
+
+        if (college.match_score !== null && college.match_score !== undefined) {
+          const matchEl = document.getElementById("college-match-score");
+          matchEl.textContent = `${college.match_score}%`;
+          matchEl.classList.remove("match-high", "match-medium", "match-low");
+          matchEl.classList.add(
+            college.match_score >= 75 ? "match-high"
+              : college.match_score >= 50 ? "match-medium"
+              : "match-low"
+          );
+          document.getElementById("match-score-block").style.display = "block";
+        }
 
         const ratingClasses = {
           "Very Important": "rating-very-important",
@@ -253,7 +317,6 @@
           "Not Considered": "rating-not-considered",
         };
 
-        const profile = loadStudentProfile();
         let shownAnyStat = false;
 
         const admissionsContainer = document.getElementById("college-admissions");
@@ -276,7 +339,7 @@
           top.append(name, badge);
           row.append(top);
 
-          const stat = statForFactor(factor, profile);
+          const stat = statForFactor(factor, profile, college);
           if (stat) {
             shownAnyStat = true;
             const statLine = document.createElement("div");

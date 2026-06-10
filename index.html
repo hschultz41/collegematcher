@@ -208,10 +208,29 @@
     .badge-location { background: #ebf8ff; color: #2b6cb0; }
     .badge-type { background: #f0fff4; color: #276749; }
 
-    .college-gpa {
-      text-align: right;
+    .college-stats {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
       flex-shrink: 0;
     }
+
+    .college-gpa {
+      text-align: right;
+    }
+
+    .match-score {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .match-score-high { background: #c6f6d5; color: #276749; }
+    .match-score-medium { background: #feebc8; color: #9c4221; }
+    .match-score-low { background: #fed7d7; color: #c53030; }
 
     .gpa-label {
       font-size: 0.7rem;
@@ -402,7 +421,15 @@
         const res = await fetch("/api/match", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gpa: parseFloat(gpa), location }),
+          body: JSON.stringify({
+            gpa: parseFloat(gpa),
+            location,
+            testType,
+            testScore,
+            classRank,
+            extracurriculars,
+            rigorCourses,
+          }),
         });
 
         let data;
@@ -452,6 +479,11 @@
         const card = document.createElement("a");
         card.className = "college-card";
         card.href = `/college/${college.slug}`;
+
+        const matchClass = college.match_score >= 75 ? "match-score-high"
+          : college.match_score >= 50 ? "match-score-medium"
+          : "match-score-low";
+
         card.innerHTML = `
           <div class="college-info">
             <h3>${college.name}</h3>
@@ -460,9 +492,12 @@
               <span class="badge badge-type">${college.type}</span>
             </div>
           </div>
-          <div class="college-gpa">
-            <div class="gpa-label">GPA Range (Mid 50%)</div>
-            <div class="gpa-value">${college.gpa_25.toFixed(2)}&ndash;${college.gpa_75.toFixed(2)}</div>
+          <div class="college-stats">
+            <div class="match-score ${matchClass}">${college.match_score}% Match</div>
+            <div class="college-gpa">
+              <div class="gpa-label">GPA Range (Mid 50%)</div>
+              <div class="gpa-value">${college.gpa_25.toFixed(2)}&ndash;${college.gpa_75.toFixed(2)}</div>
+            </div>
           </div>
         `;
         list.appendChild(card);

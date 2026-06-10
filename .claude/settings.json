@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node check_flow.js)",
+      "Bash(python3 -c \"import json,sys; print\\('Duke test_optional:', json.load\\(sys.stdin\\)['test_optional']\\)\")",
+      "Bash(curl -s \"http://localhost:8080/api/college/university-of-california-los-angeles\")",
+      "Bash(python3 -c \"import json,sys; print\\('UCLA test_optional:', json.load\\(sys.stdin\\)['test_optional']\\)\")",
+      "Bash(node check_test_optional.js)"
+    ]
+  }
+}
