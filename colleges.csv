@@ -1,51 +1,51 @@
-name,location,gpa_25,gpa_75,sat_25,sat_75,act_25,act_75,test_optional,type,rigor_rating,class_rank_rating,gpa_rating,test_scores_rating,essay_rating,recommendations_rating,extracurriculars_rating,character_rating
-Princeton University,Northeast,3.9,4.0,1500,1570,34,35,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Massachusetts Institute of Technology,Northeast,3.9,4.0,1520,1580,35,36,No,Private,I,C,I,I,I,I,I,VI
-Harvard University,Northeast,3.9,4.0,1490,1580,34,36,No,Private,C,NC,C,C,C,C,C,C
-Stanford University,West,3.9,4.0,1500,1570,34,35,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Yale University,Northeast,3.9,4.0,1500,1580,34,36,No,Private,VI,VI,VI,C,VI,VI,VI,VI
-University of Pennsylvania,Northeast,3.9,4.0,1500,1560,34,35,No,Private,VI,I,VI,C,VI,VI,I,VI
-California Institute of Technology,West,3.9,4.0,1530,1580,35,36,No,Private,VI,I,I,VI,VI,VI,I,VI
-Duke University,Southeast,3.8,3.95,1500,1570,34,35,No,Private,VI,I,VI,C,I,VI,VI,VI
-Brown University,Northeast,3.8,3.95,1500,1570,34,35,No,Private,VI,VI,VI,VI,VI,VI,I,VI
-Johns Hopkins University,Northeast,3.8,3.95,1500,1570,34,35,No,Private,VI,VI,VI,C,VI,VI,I,I
-Northwestern University,Midwest,3.8,3.95,1480,1550,33,35,No,Private,VI,VI,VI,C,VI,VI,VI,VI
-Columbia University,Northeast,3.8,3.95,1500,1560,34,35,No,Private,VI,VI,VI,C,VI,VI,VI,VI
-Cornell University,Northeast,3.8,3.95,1450,1540,33,35,No,Private,VI,I,I,C,VI,VI,VI,VI
-University of Chicago,Midwest,3.8,3.95,1510,1570,34,35,No,Private,VI,C,C,C,VI,VI,VI,VI
-University of California Berkeley,West,3.8,3.95,1320,1530,29,34,No,Public,VI,NC,VI,C,VI,C,I,I
-University of California Los Angeles,West,3.7,3.85,1290,1510,27,34,Yes,Public,VI,NC,VI,NC,VI,NC,I,I
-Rice University,South,3.7,3.85,1500,1570,34,35,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Dartmouth College,Northeast,3.7,3.85,1450,1560,32,35,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Vanderbilt University,Southeast,3.7,3.85,1500,1570,34,35,No,Private,VI,VI,VI,I,VI,I,VI,VI
-University of Notre Dame,Midwest,3.7,3.85,1430,1540,33,35,No,Private,VI,VI,VI,I,VI,VI,VI,VI
-University of Michigan,Midwest,3.7,3.85,1340,1530,31,34,No,Public,VI,NC,VI,I,I,I,C,C
-Georgetown University,Northeast,3.7,3.85,1390,1550,31,34,No,Private,VI,VI,VI,VI,VI,VI,I,VI
-Carnegie Mellon University,Northeast,3.7,3.85,1470,1560,33,35,No,Private,VI,VI,VI,C,I,I,VI,VI
-University of Virginia,Southeast,3.6,3.75,1370,1510,31,34,No,Public,VI,VI,VI,C,I,I,I,VI
-University of North Carolina Chapel Hill,Southeast,3.6,3.75,1330,1500,29,34,No,Public,VI,I,I,C,I,I,I,I
-Emory University,Southeast,3.6,3.75,1410,1530,32,34,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-University of Southern California,West,3.6,3.75,1390,1530,30,34,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-University of Florida,Southeast,3.6,3.75,1310,1470,28,33,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of Texas at Austin,South,3.6,3.75,1230,1480,27,33,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of Wisconsin-Madison,Midwest,3.5,3.65,1300,1450,27,32,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-Georgia Institute of Technology,Southeast,3.6,3.75,1370,1530,31,35,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of Illinois Urbana-Champaign,Midwest,3.6,3.75,1310,1500,28,34,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-New York University,Northeast,3.6,3.75,1430,1540,32,34,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Boston College,Northeast,3.5,3.65,1390,1500,32,34,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Tufts University,Northeast,3.6,3.75,1450,1550,33,35,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-University of Rochester,Northeast,3.5,3.65,1340,1500,31,34,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Boston University,Northeast,3.5,3.65,1390,1500,31,34,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Ohio State University,Midwest,3.4,3.55,1240,1450,27,32,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of California San Diego,West,3.6,3.75,1280,1500,27,34,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of California Davis,West,3.5,3.65,1180,1430,24,31,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of California Irvine,West,3.5,3.65,1180,1430,23,31,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of California Santa Barbara,West,3.5,3.65,1240,1470,25,32,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of Maryland College Park,Northeast,3.5,3.65,1280,1480,28,33,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-Wake Forest University,Southeast,3.5,3.65,1330,1480,30,33,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Lehigh University,Northeast,3.4,3.55,1300,1460,29,33,No,Private,VI,VI,VI,VI,VI,VI,VI,VI
-Purdue University,Midwest,3.4,3.55,1180,1440,25,32,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of Washington,West,3.5,3.65,1220,1470,26,32,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-Texas A&M University,South,3.4,3.55,1140,1380,24,31,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-University of Georgia,Southeast,3.4,3.55,1240,1410,27,32,No,Public,VI,VI,VI,VI,VI,VI,VI,VI
-Penn State University,Northeast,3.4,3.55,1160,1370,24,29,No,Public,C,C,C,C,C,C,C,C
+name,location,gpa_25,gpa_75,sat_25,sat_75,act_25,act_75,test_optional,type,tier,rigor_rating,class_rank_rating,gpa_rating,test_scores_rating,essay_rating,recommendations_rating,extracurriculars_rating,character_rating
+Princeton University,Northeast,3.9,4.0,1500,1570,34,35,No,Private,1,VI,VI,VI,VI,VI,VI,VI,VI
+Massachusetts Institute of Technology,Northeast,3.9,4.0,1520,1580,35,36,No,Private,1,I,C,I,I,I,I,I,VI
+Harvard University,Northeast,3.9,4.0,1490,1580,34,36,No,Private,1,C,NC,C,C,C,C,C,C
+Stanford University,West,3.9,4.0,1500,1570,34,35,No,Private,1,VI,VI,VI,VI,VI,VI,VI,VI
+Yale University,Northeast,3.9,4.0,1500,1580,34,36,No,Private,1,VI,VI,VI,C,VI,VI,VI,VI
+University of Pennsylvania,Northeast,3.9,4.0,1500,1560,34,35,No,Private,2,VI,I,VI,C,VI,VI,I,VI
+California Institute of Technology,West,3.9,4.0,1530,1580,35,36,No,Private,2,VI,I,I,VI,VI,VI,I,VI
+Duke University,Southeast,3.8,3.95,1500,1570,34,35,No,Private,2,VI,I,VI,C,I,VI,VI,VI
+Brown University,Northeast,3.8,3.95,1500,1570,34,35,No,Private,2,VI,VI,VI,VI,VI,VI,I,VI
+Johns Hopkins University,Northeast,3.8,3.95,1500,1570,34,35,No,Private,2,VI,VI,VI,C,VI,VI,I,I
+Northwestern University,Midwest,3.8,3.95,1480,1550,33,35,No,Private,2,VI,VI,VI,C,VI,VI,VI,VI
+Columbia University,Northeast,3.8,3.95,1500,1560,34,35,No,Private,2,VI,VI,VI,C,VI,VI,VI,VI
+Cornell University,Northeast,3.8,3.95,1450,1540,33,35,No,Private,2,VI,I,I,C,VI,VI,VI,VI
+University of Chicago,Midwest,3.8,3.95,1510,1570,34,35,No,Private,2,VI,C,C,C,VI,VI,VI,VI
+University of California Berkeley,West,3.8,3.95,1320,1530,29,34,No,Public,2,VI,NC,VI,C,VI,C,I,I
+University of California Los Angeles,West,3.7,3.85,1290,1510,27,34,Yes,Public,3,VI,NC,VI,NC,VI,NC,I,I
+Rice University,South,3.7,3.85,1500,1570,34,35,No,Private,3,VI,VI,VI,VI,VI,VI,VI,VI
+Dartmouth College,Northeast,3.7,3.85,1450,1560,32,35,No,Private,3,VI,VI,VI,VI,VI,VI,VI,VI
+Vanderbilt University,Southeast,3.7,3.85,1500,1570,34,35,No,Private,3,VI,VI,VI,I,VI,I,VI,VI
+University of Notre Dame,Midwest,3.7,3.85,1430,1540,33,35,No,Private,3,VI,VI,VI,I,VI,VI,VI,VI
+University of Michigan,Midwest,3.7,3.85,1340,1530,31,34,No,Public,3,VI,NC,VI,I,I,I,C,C
+Georgetown University,Northeast,3.7,3.85,1390,1550,31,34,No,Private,3,VI,VI,VI,VI,VI,VI,I,VI
+Carnegie Mellon University,Northeast,3.7,3.85,1470,1560,33,35,No,Private,3,VI,VI,VI,C,I,I,VI,VI
+University of Virginia,Southeast,3.6,3.75,1370,1510,31,34,No,Public,3,VI,VI,VI,C,I,I,I,VI
+University of North Carolina Chapel Hill,Southeast,3.6,3.75,1330,1500,29,34,No,Public,3,VI,I,I,C,I,I,I,I
+Emory University,Southeast,3.6,3.75,1410,1530,32,34,No,Private,4,VI,VI,VI,VI,VI,VI,VI,VI
+University of Southern California,West,3.6,3.75,1390,1530,30,34,No,Private,4,VI,VI,VI,VI,VI,VI,VI,VI
+University of Florida,Southeast,3.6,3.75,1310,1470,28,33,No,Public,4,VI,VI,VI,VI,VI,VI,VI,VI
+University of Texas at Austin,South,3.6,3.75,1230,1480,27,33,No,Public,4,VI,VI,VI,VI,VI,VI,VI,VI
+University of Wisconsin-Madison,Midwest,3.5,3.65,1300,1450,27,32,Yes,Public,4,VI,VI,VI,VI,VI,VI,VI,VI
+Georgia Institute of Technology,Southeast,3.6,3.75,1370,1530,31,35,No,Public,4,VI,VI,VI,VI,VI,VI,VI,VI
+University of Illinois Urbana-Champaign,Midwest,3.6,3.75,1310,1500,28,34,No,Public,4,VI,VI,VI,VI,VI,VI,VI,VI
+New York University,Northeast,3.6,3.75,1430,1540,32,34,No,Private,4,VI,VI,VI,VI,VI,VI,VI,VI
+Boston College,Northeast,3.5,3.65,1390,1500,32,34,No,Private,4,VI,VI,VI,VI,VI,VI,VI,VI
+Tufts University,Northeast,3.6,3.75,1450,1550,33,35,No,Private,4,VI,VI,VI,VI,VI,VI,VI,VI
+University of Rochester,Northeast,3.5,3.65,1340,1500,31,34,No,Private,5,VI,VI,VI,VI,VI,VI,VI,VI
+Boston University,Northeast,3.5,3.65,1390,1500,31,34,No,Private,5,VI,VI,VI,VI,VI,VI,VI,VI
+Ohio State University,Midwest,3.4,3.55,1240,1450,27,32,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+University of California San Diego,West,3.6,3.75,1280,1500,27,34,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+University of California Davis,West,3.5,3.65,1180,1430,24,31,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+University of California Irvine,West,3.5,3.65,1180,1430,23,31,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+University of California Santa Barbara,West,3.5,3.65,1240,1470,25,32,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+University of Maryland College Park,Northeast,3.5,3.65,1280,1480,28,33,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+Wake Forest University,Southeast,3.5,3.65,1330,1480,30,33,No,Private,5,VI,VI,VI,VI,VI,VI,VI,VI
+Lehigh University,Northeast,3.4,3.55,1300,1460,29,33,No,Private,5,VI,VI,VI,VI,VI,VI,VI,VI
+Purdue University,Midwest,3.4,3.55,1180,1440,25,32,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+University of Washington,West,3.5,3.65,1220,1470,26,32,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+Texas A&M University,South,3.4,3.55,1140,1380,24,31,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+University of Georgia,Southeast,3.4,3.55,1240,1410,27,32,No,Public,5,VI,VI,VI,VI,VI,VI,VI,VI
+Penn State University,Northeast,3.4,3.55,1160,1370,24,29,No,Public,5,C,C,C,C,C,C,C,C

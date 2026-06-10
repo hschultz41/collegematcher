@@ -303,15 +303,37 @@
             <option value="Not ranked">Not ranked</option>
           </select>
         </div>
+        <div class="form-group">
+          <label for="extracurriculars">Best Extracurricular Activity</label>
+          <select id="extracurriculars">
+            <option value="">Prefer not to say</option>
+            <option value="Tier 1">Tier 1 — National/international recognition</option>
+            <option value="Tier 2">Tier 2 — State/regional recognition or major leadership</option>
+            <option value="Tier 3">Tier 3 — School leadership or sustained involvement</option>
+            <option value="Tier 4">Tier 4 — General participation</option>
+          </select>
+        </div>
         <div class="form-row">
           <div class="form-group">
-            <label for="extracurriculars">Extracurricular Activities</label>
-            <input type="number" id="extracurriculars" min="0" max="50" placeholder="e.g. 4" />
-          </div>
-          <div class="form-group">
-            <label for="rigor-courses">AP / IB / Honors Courses</label>
+            <label for="rigor-courses">AP / IB / Honors Courses Taken</label>
             <input type="number" id="rigor-courses" min="0" max="50" placeholder="e.g. 6" />
           </div>
+          <div class="form-group">
+            <label for="rigor-offered">AP / IB / Honors Courses Offered</label>
+            <input type="number" id="rigor-offered" min="0" max="50" placeholder="e.g. 12" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="high-school-type">High School Type</label>
+          <select id="high-school-type">
+            <option value="">Prefer not to say</option>
+            <option value="Highly Selective / Feeder School">Highly Selective / Feeder School</option>
+            <option value="Competitive Private School">Competitive Private School</option>
+            <option value="Conventional Public School">Conventional Public School</option>
+            <option value="Rural / Small Public School">Rural / Small Public School</option>
+            <option value="Underserved / Title I School">Underserved / Title I School</option>
+            <option value="Homeschool / Online School">Homeschool / Online School</option>
+          </select>
         </div>
       </details>
       <div class="form-group checkbox-group">
@@ -354,6 +376,8 @@
       document.getElementById("class-rank").value = profile.classRank ?? "";
       document.getElementById("extracurriculars").value = profile.extracurriculars ?? "";
       document.getElementById("rigor-courses").value = profile.rigorCourses ?? "";
+      document.getElementById("rigor-offered").value = profile.rigorOffered ?? "";
+      document.getElementById("high-school-type").value = profile.highSchoolType ?? "";
       document.getElementById("save-profile").checked = true;
       showProfileMessage();
     }
@@ -408,9 +432,11 @@
       const classRank = document.getElementById("class-rank").value;
       const extracurriculars = document.getElementById("extracurriculars").value;
       const rigorCourses = document.getElementById("rigor-courses").value;
+      const rigorOffered = document.getElementById("rigor-offered").value;
+      const highSchoolType = document.getElementById("high-school-type").value;
 
       if (document.getElementById("save-profile").checked) {
-        saveProfile({ gpa, location, testType, testScore, classRank, extracurriculars, rigorCourses });
+        saveProfile({ gpa, location, testType, testScore, classRank, extracurriculars, rigorCourses, rigorOffered, highSchoolType });
         showProfileMessage();
       } else {
         localStorage.removeItem(PROFILE_KEY);
@@ -429,6 +455,8 @@
             classRank,
             extracurriculars,
             rigorCourses,
+            rigorOffered,
+            highSchoolType,
           }),
         });
 

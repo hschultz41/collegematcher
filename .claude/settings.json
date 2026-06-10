@@ -5,7 +5,15 @@
       "Bash(python3 -c \"import json,sys; print\\('Duke test_optional:', json.load\\(sys.stdin\\)['test_optional']\\)\")",
       "Bash(curl -s \"http://localhost:8080/api/college/university-of-california-los-angeles\")",
       "Bash(python3 -c \"import json,sys; print\\('UCLA test_optional:', json.load\\(sys.stdin\\)['test_optional']\\)\")",
-      "Bash(node check_test_optional.js)"
+      "Bash(node check_test_optional.js)",
+      "Bash(python3 -c \"import app\")",
+      "Bash(python3 app.py)",
+      "Bash(node check_ec_tier.js)",
+      "Bash(kill -9 31094 31097)",
+      "Bash(xargs kill -9)",
+      "Bash(node check_hs_type.js)",
+      "Bash(node check_hs_form.js)",
+      "Bash(node check_rigor_offered.js)"
     ]
   }
 }

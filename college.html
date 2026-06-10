@@ -167,6 +167,36 @@
     .rating-considered { background: #ebf8ff; color: #2b6cb0; font-weight: 600; }
     .rating-not-considered { background: #f7fafc; color: #cbd5e0; font-weight: 500; }
 
+    .recommendations-section {
+      padding-top: 1.25rem;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 1.25rem;
+    }
+
+    .recommendations-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0.75rem;
+    }
+
+    .recommendation-list {
+      list-style: none;
+    }
+
+    .recommendation-item {
+      font-size: 0.875rem;
+      color: #2c5282;
+      background: #ebf8ff;
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .recommendation-item:last-child { margin-bottom: 0; }
+
+    .recommendation-item strong { color: #2b6cb0; }
+
     #status-msg {
       text-align: center;
       color: #718096;
@@ -204,6 +234,10 @@
         <h2>What This School Considers in Admissions</h2>
         <p class="admissions-note">From the school's Common Data Set, Section C7 (relative importance of academic and nonacademic factors)</p>
         <div id="college-admissions"></div>
+      </div>
+      <div class="recommendations-section" id="recommendations-section" style="display:none">
+        <h2>College Matcher Recommendations</h2>
+        <ul class="recommendation-list" id="college-recommendations"></ul>
       </div>
     </div>
   </div>
@@ -247,16 +281,34 @@
         case "Class rank":
           return profile.classRank || null;
         case "Extracurricular activities":
-          return profile.extracurriculars
-            ? `${profile.extracurriculars} activities listed`
-            : null;
-        case "Rigor of secondary school record":
-          return profile.rigorCourses
-            ? `${profile.rigorCourses} AP/IB/Honors courses`
-            : null;
+          return profile.extracurriculars || null;
+        case "Rigor of secondary school record": {
+          if (!profile.rigorCourses) return null;
+          let note = `${profile.rigorCourses} AP/IB/Honors courses taken`;
+          if (profile.rigorOffered) note += ` of ${profile.rigorOffered} offered`;
+          if (profile.highSchoolType) note += ` (${profile.highSchoolType})`;
+          return note;
+        }
         default:
           return null;
       }
+    }
+
+    function buildRecommendations(profile, college) {
+      const recommendations = [];
+      if (!profile) return recommendations;
+
+      if (college.test_optional && profile.testType && profile.testScore) {
+        const score = parseFloat(profile.testScore);
+        const lo = profile.testType === "SAT" ? college.sat_25 : college.act_25;
+        if (score >= lo) {
+          recommendations.push(
+            `submit your ${profile.testType} score of ${profile.testScore}, since it falls within or above this school's typical range for admitted students`
+          );
+        }
+      }
+
+      return recommendations;
     }
 
     async function loadCollege() {
@@ -358,6 +410,18 @@
             ? "Fill out your Academic Profile on the search page to see how your stats line up here."
             : 'Save your profile on the <a href="/">search page</a> to see how your stats compare to what this school looks for.';
           admissionsContainer.appendChild(cta);
+        }
+
+        const recommendations = buildRecommendations(profile, college);
+        if (recommendations.length > 0) {
+          const recommendationsList = document.getElementById("college-recommendations");
+          recommendations.forEach(recommendation => {
+            const item = document.createElement("li");
+            item.className = "recommendation-item";
+            item.innerHTML = `For applying to <strong>${college.name}</strong>, College Matcher recommends: ${recommendation}`;
+            recommendationsList.appendChild(item);
+          });
+          document.getElementById("recommendations-section").style.display = "block";
         }
 
         document.title = `${college.name} – College Matcher`;

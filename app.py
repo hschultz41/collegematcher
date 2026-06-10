@@ -50,6 +50,25 @@ CLASS_RANK_SCORES = {
     "Not ranked": 50,
 }
 
+# Tier 1 = most impressive (national/international level), Tier 4 = least.
+EXTRACURRICULAR_TIER_SCORES = {
+    "Tier 1": 100,
+    "Tier 2": 80,
+    "Tier 3": 60,
+    "Tier 4": 40,
+}
+
+# Admissions readers evaluate rigor "in context" of what a student's school offers.
+# Students from under-resourced schools get credit for maximizing what was available to them.
+HIGH_SCHOOL_CONTEXT_BONUS = {
+    "Highly Selective / Feeder School": 0,
+    "Competitive Private School": 0,
+    "Conventional Public School": 0,
+    "Rural / Small Public School": 15,
+    "Underserved / Title I School": 15,
+    "Homeschool / Online School": 0,
+}
+
 
 def _to_float(value):
     try:
@@ -100,16 +119,22 @@ def compute_match_score(college, profile):
         weighted_total += weight * subscore
         weight_sum += weight
 
-    extracurriculars = _to_float(profile.get("extracurriculars"))
-    if extracurriculars is not None:
-        subscore = max(0, min(100, extracurriculars * 12.5))
+    extracurricular_tier = profile.get("extracurriculars")
+    if extracurricular_tier in EXTRACURRICULAR_TIER_SCORES:
+        subscore = EXTRACURRICULAR_TIER_SCORES[extracurricular_tier]
         weight = FACTOR_WEIGHTS.get(college["extracurriculars_rating"], 0)
         weighted_total += weight * subscore
         weight_sum += weight
 
     rigor_courses = _to_float(profile.get("rigorCourses"))
     if rigor_courses is not None:
-        subscore = max(0, min(100, rigor_courses * 10))
+        rigor_offered = _to_float(profile.get("rigorOffered"))
+        if rigor_offered:
+            subscore = (rigor_courses / rigor_offered) * 100
+        else:
+            subscore = rigor_courses * 10
+        subscore += HIGH_SCHOOL_CONTEXT_BONUS.get(profile.get("highSchoolType"), 0)
+        subscore = max(0, min(100, subscore))
         weight = FACTOR_WEIGHTS.get(college["rigor_rating"], 0)
         weighted_total += weight * subscore
         weight_sum += weight
@@ -182,6 +207,8 @@ def college_detail(slug):
         "classRank": request.args.get("classRank"),
         "extracurriculars": request.args.get("extracurriculars"),
         "rigorCourses": request.args.get("rigorCourses"),
+        "rigorOffered": request.args.get("rigorOffered"),
+        "highSchoolType": request.args.get("highSchoolType"),
     }
     return jsonify({
         "name": college["name"],
