@@ -16,7 +16,8 @@
       "Bash(node check_rigor_offered.js)",
       "Bash(python3 -c ' *)",
       "Bash(curl -s -X POST http://localhost:8080/api/recommendations -H 'Content-Type: application/json' -d '{ *)",
-      "Bash(node check_nav_button.js)"
+      "Bash(node check_nav_button.js)",
+      "Bash(node check_redesign.js)"
     ]
   }
 }

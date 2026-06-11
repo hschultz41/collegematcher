@@ -4,278 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>College Matcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f0f4f8;
-      color: #1a202c;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #2b6cb0;
-    }
-
-    header p {
-      color: #718096;
-      margin-top: 0.4rem;
-    }
-
-    .nav-link {
-      display: inline-block;
-      margin-top: 0.85rem;
-      padding: 0.5rem 1.1rem;
-      background: #2b6cb0;
-      color: white;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      border-radius: 999px;
-      box-shadow: 0 2px 6px rgba(43, 108, 176, 0.3);
-      transition: background 0.2s;
-    }
-
-    .nav-link:hover { background: #2c5282; }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      padding: 1.75rem;
-      max-width: 520px;
-      margin: 0 auto 2rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 0.6rem 0.85rem;
-      border: 1.5px solid #cbd5e0;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.2s;
-      background: white;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #2b6cb0;
-    }
-
-    button {
-      width: 100%;
-      padding: 0.75rem;
-      background: #2b6cb0;
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover { background: #2c5282; }
-    button:disabled { background: #a0aec0; cursor: not-allowed; }
-
-    .academic-profile {
-      border: 1.5px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .academic-profile summary {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #2b6cb0;
-      cursor: pointer;
-    }
-
-    .academic-profile-note {
-      font-size: 0.78rem;
-      color: #a0aec0;
-      margin: 0.5rem 0 1rem;
-    }
-
-    .academic-profile .form-group:last-child { margin-bottom: 0; }
-
-    .form-row {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .form-row .form-group { flex: 1; }
-
-    .checkbox-group { margin-bottom: 1rem; }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 500;
-      font-size: 0.875rem;
-      color: #4a5568;
-      cursor: pointer;
-    }
-
-    .checkbox-label input[type="checkbox"] {
-      width: auto;
-      cursor: pointer;
-    }
-
-    #profile-msg {
-      color: #2f855a;
-      font-size: 0.8rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-
-    #profile-msg button {
-      width: auto;
-      display: inline;
-      background: none;
-      color: #2b6cb0;
-      font-weight: 600;
-      font-size: 0.8rem;
-      padding: 0;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    #profile-msg button:hover { background: none; color: #2c5282; }
-
-    #error-msg {
-      color: #c53030;
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-
+    .card { max-width: 520px; margin: 0 auto 2rem; }
     #results-section { max-width: 760px; margin: 0 auto; }
-
-    #results-header {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #4a5568;
-      margin-bottom: 1rem;
-    }
-
-    .college-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1rem;
-      display: flex;
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow 0.15s, transform 0.15s;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .college-card:hover {
-      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-      transform: translateY(-1px);
-    }
-
-    .college-info h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #2d3748;
-    }
-
-    .college-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    .badge {
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-    }
-
-    .badge-location { background: #ebf8ff; color: #2b6cb0; }
-    .badge-type { background: #f0fff4; color: #276749; }
-
-    .college-stats {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.5rem;
-      flex-shrink: 0;
-    }
-
-    .college-gpa {
-      text-align: right;
-    }
-
-    .match-score {
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    .match-score-high { background: #c6f6d5; color: #276749; }
-    .match-score-medium { background: #feebc8; color: #9c4221; }
-    .match-score-low { background: #fed7d7; color: #c53030; }
-
-    .gpa-label {
-      font-size: 0.7rem;
-      color: #a0aec0;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .gpa-value {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #2b6cb0;
-      white-space: nowrap;
-    }
-
-    #no-results {
-      text-align: center;
-      color: #718096;
-      padding: 2rem;
-      display: none;
-    }
   </style>
 </head>
 <body>
-  <header>
+  <header class="hero">
+    <div class="hero-icon">🎓</div>
     <h1>College Matcher</h1>
     <p>Find colleges that fit your profile</p>
-    <a href="/recommendations" class="nav-link">View My Application List &rarr;</a>
+    <a href="/recommendations" class="btn">View My Application List &rarr;</a>
   </header>
 
   <div class="card">
@@ -359,7 +102,7 @@
           Remember my profile on this device
         </label>
       </div>
-      <button type="submit" id="submit-btn">Find Matches</button>
+      <button type="submit" id="submit-btn" class="btn btn-block">Find Matches</button>
       <p id="profile-msg"></p>
       <p id="error-msg"></p>
     </form>
@@ -373,6 +116,33 @@
 
   <script>
     const PROFILE_KEY = "collegeMatcherProfile";
+
+    const CATEGORY_BADGE_CLASSES = {
+      "Hard Reach": "category-badge-hard-reach",
+      Reach: "category-badge-reach",
+      Target: "category-badge-target",
+      Safety: "category-badge-safety",
+    };
+
+    const CATEGORY_ICONS = {
+      "Hard Reach": "🔥",
+      Reach: "🚀",
+      Target: "🎯",
+      Safety: "🛡️",
+    };
+
+    function matchMeterHTML(score) {
+      const level = score >= 75 ? "high" : score >= 50 ? "medium" : "low";
+      return `
+        <div class="match-meter ${level}">
+          <div class="match-meter-top">
+            <span class="match-meter-label">Match</span>
+            <span class="match-meter-value">${score}%</span>
+          </div>
+          <div class="match-meter-track"><div class="match-meter-fill" style="width:${score}%"></div></div>
+        </div>
+      `;
+    }
 
     function loadProfile() {
       const saved = localStorage.getItem(PROFILE_KEY);
@@ -525,9 +295,11 @@
         card.className = "college-card";
         card.href = `/college/${college.slug}`;
 
-        const matchClass = college.match_score >= 75 ? "match-score-high"
-          : college.match_score >= 50 ? "match-score-medium"
-          : "match-score-low";
+        const categoryClass = CATEGORY_BADGE_CLASSES[college.application_category] || "";
+        const categoryIcon = CATEGORY_ICONS[college.application_category] || "";
+        const categoryBadge = college.application_category
+          ? `<span class="badge ${categoryClass}">${categoryIcon} ${college.application_category}</span>`
+          : "";
 
         card.innerHTML = `
           <div class="college-info">
@@ -535,10 +307,11 @@
             <div class="college-meta">
               <span class="badge badge-location">${college.location}</span>
               <span class="badge badge-type">${college.type}</span>
+              ${categoryBadge}
             </div>
           </div>
           <div class="college-stats">
-            <div class="match-score ${matchClass}">${college.match_score}% Match</div>
+            ${matchMeterHTML(college.match_score)}
             <div class="college-gpa">
               <div class="gpa-label">GPA Range (Mid 50%)</div>
               <div class="gpa-value">${college.gpa_25.toFixed(2)}&ndash;${college.gpa_75.toFixed(2)}</div>

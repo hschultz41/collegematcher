@@ -4,45 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>College Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f0f4f8;
-      color: #1a202c;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-
-    .back-link {
-      display: inline-block;
-      max-width: 640px;
-      margin: 0 auto 1rem;
-      color: #2b6cb0;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-    }
-
-    .back-link:hover { text-decoration: underline; }
-
-    .wrapper {
-      max-width: 640px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      padding: 2rem;
-    }
+    .wrapper { max-width: 640px; }
+    .back-link { max-width: 640px; margin-left: auto; margin-right: auto; display: block; }
 
     h1 {
       font-size: 1.75rem;
-      font-weight: 700;
-      color: #2d3748;
+      font-weight: 800;
+      color: var(--text);
       margin-bottom: 0.5rem;
     }
 
@@ -53,77 +26,66 @@
       margin-bottom: 1.5rem;
     }
 
-    .badge {
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-    }
-
-    .badge-location { background: #ebf8ff; color: #2b6cb0; }
-    .badge-type { background: #f0fff4; color: #276749; }
-    .badge-test-optional { background: #faf5ff; color: #6b46c1; }
-    .badge-test-required { background: #fffaf0; color: #b7791f; }
+    .badge-lg { font-size: 0.9rem; padding: 0.35rem 0.85rem; }
 
     .stat-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.5rem 2rem;
+      gap: 1.5rem 2.5rem;
       padding: 1.25rem 0;
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid var(--border);
     }
 
     .stat-label {
       font-size: 0.7rem;
-      color: #a0aec0;
+      color: var(--text-muted);
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.25rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
     }
 
     .stat-value {
       font-size: 1.5rem;
-      font-weight: 700;
-      color: #2b6cb0;
+      font-weight: 800;
+      font-family: "Poppins", sans-serif;
+      color: var(--primary-dark);
     }
 
-    .stat-value-sm {
-      font-size: 1rem;
-      white-space: nowrap;
-    }
+    .stat-value-sm { font-size: 1rem; white-space: nowrap; }
 
-    .match-high { color: #2f855a; }
-    .match-medium { color: #c05621; }
-    .match-low { color: #c53030; }
+    .stat-value.level-high { color: var(--safety); }
+    .stat-value.level-medium { color: var(--reach); }
+    .stat-value.level-low { color: var(--hardreach); }
 
-    .category-safety { color: #2f855a; }
-    .category-target { color: #2b6cb0; }
-    .category-reach { color: #c05621; }
-    .category-hard-reach { color: #c53030; }
+    .match-meter-block { margin-top: 0.5rem; width: 110px; }
 
-    .admissions-section {
+    .admissions-section,
+    .recommendations-section {
       padding-top: 1.25rem;
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid var(--border);
       margin-top: 1.25rem;
     }
 
-    .admissions-section h2 {
-      font-size: 1rem;
+    .admissions-section h2,
+    .recommendations-section h2 {
+      font-size: 1.05rem;
       font-weight: 700;
-      color: #2d3748;
+      color: var(--text);
       margin-bottom: 0.25rem;
     }
 
+    .recommendations-section h2 { margin-bottom: 0.75rem; }
+
     .admissions-note {
       font-size: 0.78rem;
-      color: #a0aec0;
+      color: var(--text-muted);
       margin-bottom: 0.85rem;
     }
 
     .factor-row {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #f0f4f8;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--bg-grad-end);
       font-size: 0.875rem;
     }
 
@@ -133,80 +95,60 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 0.75rem;
     }
 
-    .factor-name { color: #4a5568; }
-    .factor-row.is-very-important .factor-name { color: #2d3748; font-weight: 600; }
+    .factor-name { color: var(--text-secondary); }
+    .factor-row.is-very-important .factor-name { color: var(--text); font-weight: 600; }
 
     .your-stat {
       font-size: 0.78rem;
-      color: #718096;
-      margin-top: 0.25rem;
+      color: var(--text-secondary);
+      margin-top: 0.3rem;
     }
 
-    .your-stat strong { color: #2b6cb0; font-weight: 600; }
+    .your-stat strong { color: var(--primary-dark); font-weight: 600; }
 
     .profile-cta {
       font-size: 0.78rem;
-      color: #a0aec0;
+      color: var(--text-muted);
       margin-top: 0.5rem;
     }
 
-    .profile-cta a { color: #2b6cb0; font-weight: 600; }
+    .profile-cta a { color: var(--primary); font-weight: 600; }
 
     .factor-rating {
       font-size: 0.75rem;
       font-weight: 600;
-      padding: 0.2rem 0.65rem;
-      border-radius: 999px;
+      padding: 0.22rem 0.7rem;
+      border-radius: var(--radius-pill);
       white-space: nowrap;
     }
 
     .rating-very-important {
-      background: #c53030;
+      background: var(--primary);
       color: white;
       font-weight: 700;
-      box-shadow: 0 1px 4px rgba(197, 48, 48, 0.35);
+      box-shadow: 0 2px 8px rgba(91, 95, 236, 0.35);
     }
-    .rating-important { background: #ed8936; color: white; font-weight: 700; }
-    .rating-considered { background: #ebf8ff; color: #2b6cb0; font-weight: 600; }
-    .rating-not-considered { background: #f7fafc; color: #cbd5e0; font-weight: 500; }
+    .rating-important { background: var(--accent); color: white; font-weight: 700; }
+    .rating-considered { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+    .rating-not-considered { background: #f3f4f8; color: var(--text-muted); font-weight: 500; }
 
-    .recommendations-section {
-      padding-top: 1.25rem;
-      border-top: 1px solid #e2e8f0;
-      margin-top: 1.25rem;
-    }
-
-    .recommendations-section h2 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #2d3748;
-      margin-bottom: 0.75rem;
-    }
-
-    .recommendation-list {
-      list-style: none;
-    }
+    .recommendation-list { list-style: none; }
 
     .recommendation-item {
       font-size: 0.875rem;
-      color: #2c5282;
-      background: #ebf8ff;
-      border-radius: 8px;
-      padding: 0.6rem 0.85rem;
+      color: var(--primary-dark);
+      background: var(--primary-light);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.9rem;
       margin-bottom: 0.5rem;
     }
 
     .recommendation-item:last-child { margin-bottom: 0; }
 
-    .recommendation-item strong { color: #2b6cb0; }
-
-    #status-msg {
-      text-align: center;
-      color: #718096;
-      padding: 2rem;
-    }
+    .recommendation-item strong { color: var(--primary-dark); }
   </style>
 </head>
 <body>
@@ -233,10 +175,13 @@
         <div id="match-score-block" style="display:none">
           <div class="stat-label">Your Match Score</div>
           <div class="stat-value" id="college-match-score"></div>
+          <div class="match-meter match-meter-block" id="college-match-meter">
+            <div class="match-meter-track"><div class="match-meter-fill" id="college-match-fill"></div></div>
+          </div>
         </div>
         <div id="application-category-block" style="display:none">
           <div class="stat-label">Application Category</div>
-          <div class="stat-value" id="college-application-category"></div>
+          <span class="badge badge-lg" id="college-application-category"></span>
         </div>
       </div>
       <div class="admissions-section">
@@ -245,7 +190,7 @@
         <div id="college-admissions"></div>
       </div>
       <div class="recommendations-section" id="recommendations-section" style="display:none">
-        <h2>College Matcher Recommendations</h2>
+        <h2>💡 College Matcher Recommendations</h2>
         <ul class="recommendation-list" id="college-recommendations"></ul>
       </div>
     </div>
@@ -253,6 +198,20 @@
 
   <script>
     const PROFILE_KEY = "collegeMatcherProfile";
+
+    const CATEGORY_BADGE_CLASSES = {
+      "Hard Reach": "category-badge-hard-reach",
+      Reach: "category-badge-reach",
+      Target: "category-badge-target",
+      Safety: "category-badge-safety",
+    };
+
+    const CATEGORY_ICONS = {
+      "Hard Reach": "🔥",
+      Reach: "🚀",
+      Target: "🎯",
+      Safety: "🛡️",
+    };
 
     // High school types that get a rigor "context bonus" on the server also get
     // extra context when deciding whether to submit a below-range test score.
@@ -380,28 +339,25 @@
           `SAT ${college.sat_25}–${college.sat_75} / ACT ${college.act_25}–${college.act_75}`;
 
         if (college.match_score !== null && college.match_score !== undefined) {
+          const score = college.match_score;
+          const level = score >= 75 ? "high" : score >= 50 ? "medium" : "low";
+
           const matchEl = document.getElementById("college-match-score");
-          matchEl.textContent = `${college.match_score}%`;
-          matchEl.classList.remove("match-high", "match-medium", "match-low");
-          matchEl.classList.add(
-            college.match_score >= 75 ? "match-high"
-              : college.match_score >= 50 ? "match-medium"
-              : "match-low"
-          );
+          matchEl.textContent = `${score}%`;
+          matchEl.className = `stat-value level-${level}`;
+
+          document.getElementById("college-match-meter").className = `match-meter match-meter-block ${level}`;
+          document.getElementById("college-match-fill").style.width = `${score}%`;
+
           document.getElementById("match-score-block").style.display = "block";
         }
 
         if (college.application_category) {
-          const categoryClasses = {
-            "Hard Reach": "category-hard-reach",
-            Reach: "category-reach",
-            Target: "category-target",
-            Safety: "category-safety",
-          };
           const categoryEl = document.getElementById("college-application-category");
-          categoryEl.textContent = college.application_category;
-          categoryEl.classList.remove("category-hard-reach", "category-reach", "category-target", "category-safety");
-          categoryEl.classList.add(categoryClasses[college.application_category]);
+          const categoryClass = CATEGORY_BADGE_CLASSES[college.application_category] || "";
+          const categoryIcon = CATEGORY_ICONS[college.application_category] || "";
+          categoryEl.className = `badge badge-lg ${categoryClass}`;
+          categoryEl.textContent = `${categoryIcon} ${college.application_category}`;
           document.getElementById("application-category-block").style.display = "block";
         }
 

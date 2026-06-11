@@ -4,190 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Decision Simulator – College Matcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f0f4f8;
-      color: #1a202c;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-
-    .back-link {
-      display: inline-block;
-      max-width: 760px;
-      margin: 0 auto 1rem;
-      color: #2b6cb0;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-    }
-
-    .back-link:hover { text-decoration: underline; }
-
-    .wrapper {
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    header h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #2b6cb0;
-    }
-
-    header p {
-      color: #718096;
-      margin-top: 0.4rem;
-    }
-
-    #status-msg {
-      text-align: center;
-      color: #718096;
-      padding: 2rem;
-    }
-
-    #status-msg a { color: #2b6cb0; font-weight: 600; }
+    .wrapper { max-width: 760px; }
+    .back-link, .page-header { max-width: 760px; margin-left: auto; margin-right: auto; }
+    .back-link { display: block; }
 
     .disclaimer {
       text-align: center;
       font-size: 0.78rem;
-      color: #a0aec0;
+      color: var(--text-muted);
       margin-bottom: 1.25rem;
     }
 
-    .simulate-btn {
-      display: block;
-      margin: 0 auto 1.5rem;
-      padding: 0.65rem 1.5rem;
-      background: #2b6cb0;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(43, 108, 176, 0.3);
-      transition: background 0.2s;
-    }
-
-    .simulate-btn:hover { background: #2c5282; }
-    .simulate-btn:disabled { background: #a0aec0; cursor: not-allowed; }
+    .simulate-btn { margin: 0 auto 1.5rem; }
 
     .summary-bar {
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 0.75rem;
       margin-bottom: 2rem;
-      font-size: 0.9rem;
-      font-weight: 700;
-    }
-
-    .summary-accepted { color: #276749; }
-    .summary-waitlisted { color: #6b46c1; }
-    .summary-rejected { color: #c53030; }
-
-    .category-section { margin-bottom: 2rem; }
-
-    .category-section h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #2d3748;
-      margin-bottom: 1rem;
-    }
-
-    .empty-msg {
-      color: #a0aec0;
-      font-size: 0.875rem;
-      padding: 0.5rem 0;
-    }
-
-    .college-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1rem;
-      display: flex;
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow 0.15s, transform 0.15s;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .college-card:hover {
-      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-      transform: translateY(-1px);
-    }
-
-    .college-info h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #2d3748;
-    }
-
-    .college-meta {
-      display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
     }
 
-    .badge {
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-    }
-
-    .badge-location { background: #ebf8ff; color: #2b6cb0; }
-    .badge-type { background: #f0fff4; color: #276749; }
-
-    .category-badge-safety { background: #c6f6d5; color: #276749; }
-    .category-badge-target { background: #ebf8ff; color: #2b6cb0; }
-    .category-badge-reach { background: #feebc8; color: #9c4221; }
-    .category-badge-hard-reach { background: #fed7d7; color: #c53030; }
-
-    .college-stats {
+    .summary-chip {
       display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--surface);
+      border-radius: var(--radius-pill);
+      padding: 0.55rem 1.15rem;
+      box-shadow: var(--shadow-card);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .summary-chip .summary-count { font-family: "Poppins", sans-serif; font-size: 1.05rem; }
+
+    .summary-chip-accepted { color: var(--safety-text); }
+    .summary-chip-waitlisted { color: #7e22ce; }
+    .summary-chip-rejected { color: var(--hardreach-text); }
+
+    .college-stats-stacked {
       flex-direction: column;
       align-items: flex-end;
       gap: 0.5rem;
-      flex-shrink: 0;
+    }
+
+    @media (max-width: 540px) {
+      .college-stats-stacked {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+      }
     }
 
     .decision-badge {
-      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
       font-weight: 700;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-pill);
       white-space: nowrap;
     }
 
-    .decision-badge-accepted { background: #c6f6d5; color: #276749; }
-    .decision-badge-waitlisted { background: #faf5ff; color: #6b46c1; }
-    .decision-badge-rejected { background: #fed7d7; color: #c53030; }
-
-    .match-score {
-      font-size: 0.78rem;
-      color: #a0aec0;
-      font-weight: 600;
-    }
+    .decision-badge-accepted { background: var(--safety-bg); color: var(--safety-text); }
+    .decision-badge-waitlisted { background: #f3e8ff; color: #7e22ce; }
+    .decision-badge-rejected { background: var(--hardreach-bg); color: var(--hardreach-text); }
   </style>
 </head>
 <body>
   <div class="wrapper">
     <a href="/recommendations" class="back-link">&larr; Back to application list</a>
-    <header>
+    <header class="page-header">
       <h1>Decision Simulator</h1>
       <p>A randomized preview of how decisions might play out for your list</p>
     </header>
@@ -196,19 +91,19 @@
 
     <div id="simulation-content" style="display:none">
       <p class="disclaimer">These results are randomly generated for demonstration purposes and don't reflect real admissions odds.</p>
-      <button id="simulate-btn" class="simulate-btn" type="button">Simulate Again</button>
+      <button id="simulate-btn" class="btn simulate-btn" type="button">Simulate Again</button>
       <div class="summary-bar" id="summary-bar"></div>
 
       <section class="category-section">
-        <h2>Reach Schools</h2>
+        <h2>🚀 Reach Schools</h2>
         <div id="reach-list"></div>
       </section>
       <section class="category-section">
-        <h2>Target Schools</h2>
+        <h2>🎯 Target Schools</h2>
         <div id="target-list"></div>
       </section>
       <section class="category-section">
-        <h2>Safety Schools</h2>
+        <h2>🛡️ Safety Schools</h2>
         <div id="safety-list"></div>
       </section>
     </div>
@@ -224,11 +119,37 @@
       Safety: "category-badge-safety",
     };
 
+    const CATEGORY_ICONS = {
+      "Hard Reach": "🔥",
+      Reach: "🚀",
+      Target: "🎯",
+      Safety: "🛡️",
+    };
+
     const DECISION_BADGE_CLASSES = {
       Accepted: "decision-badge-accepted",
       Waitlisted: "decision-badge-waitlisted",
       Rejected: "decision-badge-rejected",
     };
+
+    const DECISION_ICONS = {
+      Accepted: "✅",
+      Waitlisted: "⏳",
+      Rejected: "❌",
+    };
+
+    function matchMeterHTML(score, compact = false) {
+      const level = score >= 75 ? "high" : score >= 50 ? "medium" : "low";
+      return `
+        <div class="match-meter ${level}${compact ? " compact" : ""}">
+          <div class="match-meter-top">
+            <span class="match-meter-label">Match</span>
+            <span class="match-meter-value">${score}%</span>
+          </div>
+          <div class="match-meter-track"><div class="match-meter-fill" style="width:${score}%"></div></div>
+        </div>
+      `;
+    }
 
     function loadStudentProfile() {
       const saved = localStorage.getItem(PROFILE_KEY);
@@ -246,7 +167,9 @@
       card.href = `/college/${college.slug}`;
 
       const categoryClass = CATEGORY_BADGE_CLASSES[college.application_category] || "";
+      const categoryIcon = CATEGORY_ICONS[college.application_category] || "";
       const decisionClass = DECISION_BADGE_CLASSES[college.decision] || "";
+      const decisionIcon = DECISION_ICONS[college.decision] || "";
 
       card.innerHTML = `
         <div class="college-info">
@@ -254,12 +177,12 @@
           <div class="college-meta">
             <span class="badge badge-location">${college.location}</span>
             <span class="badge badge-type">${college.type}</span>
-            <span class="badge ${categoryClass}">${college.application_category}</span>
+            <span class="badge ${categoryClass}">${categoryIcon} ${college.application_category}</span>
           </div>
         </div>
-        <div class="college-stats">
-          <div class="decision-badge ${decisionClass}">${college.decision}</div>
-          <div class="match-score">${college.match_score}% Match</div>
+        <div class="college-stats college-stats-stacked">
+          <div class="decision-badge ${decisionClass}">${decisionIcon} ${college.decision}</div>
+          ${matchMeterHTML(college.match_score, true)}
         </div>
       `;
       return card;
@@ -287,9 +210,9 @@
       });
 
       document.getElementById("summary-bar").innerHTML = `
-        <span class="summary-accepted">${counts.Accepted} Accepted</span>
-        <span class="summary-waitlisted">${counts.Waitlisted} Waitlisted</span>
-        <span class="summary-rejected">${counts.Rejected} Rejected</span>
+        <span class="summary-chip summary-chip-accepted">✅ <span class="summary-count">${counts.Accepted}</span> Accepted</span>
+        <span class="summary-chip summary-chip-waitlisted">⏳ <span class="summary-count">${counts.Waitlisted}</span> Waitlisted</span>
+        <span class="summary-chip summary-chip-rejected">❌ <span class="summary-count">${counts.Rejected}</span> Rejected</span>
       `;
     }
 

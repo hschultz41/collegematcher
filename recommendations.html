@@ -4,188 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your Application List – College Matcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f0f4f8;
-      color: #1a202c;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-
-    .back-link {
-      display: inline-block;
-      max-width: 760px;
-      margin: 0 auto 1rem;
-      color: #2b6cb0;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-    }
-
-    .back-link:hover { text-decoration: underline; }
-
-    .wrapper {
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    header h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #2b6cb0;
-    }
-
-    header p {
-      color: #718096;
-      margin-top: 0.4rem;
-    }
-
-    #status-msg {
-      text-align: center;
-      color: #718096;
-      padding: 2rem;
-    }
-
-    #status-msg a { color: #2b6cb0; font-weight: 600; }
-
-    .nav-link {
-      display: block;
-      width: fit-content;
-      margin: 0 auto 2rem;
-      padding: 0.5rem 1.1rem;
-      background: #2b6cb0;
-      color: white;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      border-radius: 999px;
-      box-shadow: 0 2px 6px rgba(43, 108, 176, 0.3);
-      transition: background 0.2s;
-    }
-
-    .nav-link:hover { background: #2c5282; }
-
-    .category-section { margin-bottom: 2rem; }
-
-    .category-section h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #2d3748;
-      margin-bottom: 0.25rem;
-    }
-
-    .category-desc {
-      font-size: 0.85rem;
-      color: #718096;
-      margin-bottom: 1rem;
-    }
-
-    .empty-msg {
-      color: #a0aec0;
-      font-size: 0.875rem;
-      padding: 0.5rem 0;
-    }
-
-    .college-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1rem;
-      display: flex;
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow 0.15s, transform 0.15s;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .college-card:hover {
-      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-      transform: translateY(-1px);
-    }
-
-    .college-info h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #2d3748;
-    }
-
-    .college-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    .badge {
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-    }
-
-    .badge-location { background: #ebf8ff; color: #2b6cb0; }
-    .badge-type { background: #f0fff4; color: #276749; }
-
-    .category-badge-safety { background: #c6f6d5; color: #276749; }
-    .category-badge-target { background: #ebf8ff; color: #2b6cb0; }
-    .category-badge-reach { background: #feebc8; color: #9c4221; }
-    .category-badge-hard-reach { background: #fed7d7; color: #c53030; }
-
-    .college-stats {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.5rem;
-      flex-shrink: 0;
-    }
-
-    .college-gpa {
-      text-align: right;
-    }
-
-    .match-score {
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    .match-score-high { background: #c6f6d5; color: #276749; }
-    .match-score-medium { background: #feebc8; color: #9c4221; }
-    .match-score-low { background: #fed7d7; color: #c53030; }
-
-    .gpa-label {
-      font-size: 0.7rem;
-      color: #a0aec0;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .gpa-value {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #2b6cb0;
-      white-space: nowrap;
-    }
+    .wrapper { max-width: 760px; }
+    .back-link, .page-header { max-width: 760px; margin-left: auto; margin-right: auto; }
+    .back-link { display: block; }
   </style>
 </head>
 <body>
   <div class="wrapper">
     <a href="/" class="back-link">&larr; Back to search</a>
-    <header>
+    <header class="page-header">
       <h1>Your Application List</h1>
       <p>A balanced list of Reach, Target, and Safety schools based on your profile</p>
     </header>
@@ -193,19 +25,19 @@
     <p id="status-msg">Loading your application list…</p>
 
     <div id="recommendations-content" style="display:none">
-      <a href="/decisions" class="nav-link">Simulate Decisions &rarr;</a>
+      <a href="/decisions" class="btn nav-link-center">Simulate Decisions &rarr;</a>
       <section class="category-section">
-        <h2>Reach Schools</h2>
+        <h2>🚀 Reach Schools</h2>
         <p class="category-desc">Ambitious choices — your stats are below the typical range, but these are worth a shot.</p>
         <div id="reach-list"></div>
       </section>
       <section class="category-section">
-        <h2>Target Schools</h2>
+        <h2>🎯 Target Schools</h2>
         <p class="category-desc">Schools where your profile is competitive — these should make up the core of your list.</p>
         <div id="target-list"></div>
       </section>
       <section class="category-section">
-        <h2>Safety Schools</h2>
+        <h2>🛡️ Safety Schools</h2>
         <p class="category-desc">Schools where your stats exceed the typical range — admission is likely.</p>
         <div id="safety-list"></div>
       </section>
@@ -222,6 +54,26 @@
       Safety: "category-badge-safety",
     };
 
+    const CATEGORY_ICONS = {
+      "Hard Reach": "🔥",
+      Reach: "🚀",
+      Target: "🎯",
+      Safety: "🛡️",
+    };
+
+    function matchMeterHTML(score) {
+      const level = score >= 75 ? "high" : score >= 50 ? "medium" : "low";
+      return `
+        <div class="match-meter ${level}">
+          <div class="match-meter-top">
+            <span class="match-meter-label">Match</span>
+            <span class="match-meter-value">${score}%</span>
+          </div>
+          <div class="match-meter-track"><div class="match-meter-fill" style="width:${score}%"></div></div>
+        </div>
+      `;
+    }
+
     function loadStudentProfile() {
       const saved = localStorage.getItem(PROFILE_KEY);
       if (!saved) return null;
@@ -237,11 +89,8 @@
       card.className = "college-card";
       card.href = `/college/${college.slug}`;
 
-      const matchClass = college.match_score >= 75 ? "match-score-high"
-        : college.match_score >= 50 ? "match-score-medium"
-        : "match-score-low";
-
       const categoryClass = CATEGORY_BADGE_CLASSES[college.application_category] || "";
+      const categoryIcon = CATEGORY_ICONS[college.application_category] || "";
 
       card.innerHTML = `
         <div class="college-info">
@@ -249,11 +98,11 @@
           <div class="college-meta">
             <span class="badge badge-location">${college.location}</span>
             <span class="badge badge-type">${college.type}</span>
-            <span class="badge ${categoryClass}">${college.application_category}</span>
+            <span class="badge ${categoryClass}">${categoryIcon} ${college.application_category}</span>
           </div>
         </div>
         <div class="college-stats">
-          <div class="match-score ${matchClass}">${college.match_score}% Match</div>
+          ${matchMeterHTML(college.match_score)}
           <div class="college-gpa">
             <div class="gpa-label">GPA Range (Mid 50%)</div>
             <div class="gpa-value">${college.gpa_25.toFixed(2)}&ndash;${college.gpa_75.toFixed(2)}</div>
