@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory, abort
 import pandas as pd
 import os
+import random
 import re
 
 app = Flask(__name__)
@@ -212,6 +213,21 @@ def build_recommendation_lists(results):
     return reaches, targets, safeties
 
 
+# Placeholder decision odds per application category, used only by the decision simulator.
+DECISION_WEIGHTS = {
+    "Safety": {"Accepted": 80, "Waitlisted": 15, "Rejected": 5},
+    "Target": {"Accepted": 50, "Waitlisted": 25, "Rejected": 25},
+    "Reach": {"Accepted": 20, "Waitlisted": 25, "Rejected": 55},
+    "Hard Reach": {"Accepted": 8, "Waitlisted": 12, "Rejected": 80},
+}
+
+
+def simulate_decision(category):
+    weights = DECISION_WEIGHTS.get(category, DECISION_WEIGHTS["Target"])
+    outcomes, odds = zip(*weights.items())
+    return random.choices(outcomes, weights=odds, k=1)[0]
+
+
 colleges_df = pd.read_csv(os.path.join(BASE_DIR, "colleges.csv"))
 colleges_df["slug"] = colleges_df["name"].apply(slugify)
 colleges_df["admissions_factors_dict"] = colleges_df.apply(build_admissions_factors, axis=1)
@@ -284,6 +300,38 @@ def recommendations():
 @app.route("/recommendations")
 def recommendations_page():
     return send_from_directory(BASE_DIR, "recommendations.html")
+
+
+@app.route("/api/simulate", methods=["POST"])
+def simulate():
+    data = request.get_json() or {}
+
+    location = (data.get("location") or "Any").strip()
+
+    results = colleges_df.copy()
+    if location and location != "Any":
+        results = results[results["location"] == location]
+
+    results["match_score"] = results.apply(lambda college: compute_match_score(college, data), axis=1)
+    results = results.dropna(subset=["match_score"])
+
+    if results.empty:
+        return jsonify({"error": "Not enough profile information to simulate decisions."}), 400
+
+    results["application_category"] = results.apply(
+        lambda college: classify_application_category(college, college["match_score"]), axis=1
+    )
+
+    reaches, targets, safeties = build_recommendation_lists(results)
+    for school in reaches + targets + safeties:
+        school["decision"] = simulate_decision(school["application_category"])
+
+    return jsonify({"reaches": reaches, "targets": targets, "safeties": safeties})
+
+
+@app.route("/decisions")
+def decisions_page():
+    return send_from_directory(BASE_DIR, "decisions.html")
 
 
 @app.route("/college/<slug>")
