@@ -147,7 +147,7 @@ def compute_match_score(college, profile):
 # Tier-adjusted thresholds for classifying a school as a Hard Reach, Reach, Target, or Safety.
 # More selective tiers get a larger penalty since elite schools remain a "Reach"
 # for nearly everyone regardless of stats.
-TIER_PENALTY = {1: 60, 2: 45, 3: 30, 4: 15, 5: 0}
+TIER_PENALTY = {1: 60, 2: 45, 3: 30, 4: 15, 5: 0, 6: 0}
 
 
 def classify_application_category(college, match_score):
@@ -172,6 +172,44 @@ def classify_application_category(college, match_score):
         category = "Reach"
 
     return category
+
+
+# Columns returned for each school in a recommendations list.
+RECOMMENDATION_COLUMNS = ["name", "slug", "location", "gpa_25", "gpa_75", "type", "match_score", "application_category"]
+
+
+def build_recommendation_lists(results):
+    """Pick the highest-scoring schools for each application category.
+
+    If a category doesn't have enough schools, its remaining slots are
+    filled from the next "harder" category (e.g. Target -> Reach -> Hard Reach),
+    so a student is never recommended a Target/Safety school they can't realistically get.
+    """
+    used_slugs = set()
+
+    def take(categories, count):
+        selected = []
+        for category in categories:
+            if len(selected) >= count:
+                break
+            pool = results[
+                (results["application_category"] == category) & (~results["slug"].isin(used_slugs))
+            ]
+            if category in ("Target", "Safety"):
+                # Within Target/Safety, prefer the least-selective (highest tier number)
+                # schools first -- these are the "safest" picks in that category.
+                pool = pool.sort_values(["tier", "match_score"], ascending=[False, False])
+            else:
+                pool = pool.sort_values("match_score", ascending=False)
+            chosen = pool.head(count - len(selected))
+            selected.extend(chosen[RECOMMENDATION_COLUMNS].to_dict(orient="records"))
+            used_slugs.update(chosen["slug"])
+        return selected
+
+    reaches = take(["Reach", "Hard Reach"], 10)
+    targets = take(["Target", "Reach", "Hard Reach"], 7)
+    safeties = take(["Safety", "Target", "Reach", "Hard Reach"], 3)
+    return reaches, targets, safeties
 
 
 colleges_df = pd.read_csv(os.path.join(BASE_DIR, "colleges.csv"))
@@ -217,6 +255,35 @@ def match_colleges():
         ["name", "slug", "location", "gpa_25", "gpa_75", "type", "match_score", "application_category"]
     ].to_dict(orient="records")
     return jsonify({"matches": matches, "total": len(matches)})
+
+
+@app.route("/api/recommendations", methods=["POST"])
+def recommendations():
+    data = request.get_json() or {}
+
+    location = (data.get("location") or "Any").strip()
+
+    results = colleges_df.copy()
+    if location and location != "Any":
+        results = results[results["location"] == location]
+
+    results["match_score"] = results.apply(lambda college: compute_match_score(college, data), axis=1)
+    results = results.dropna(subset=["match_score"])
+
+    if results.empty:
+        return jsonify({"error": "Not enough profile information to generate recommendations."}), 400
+
+    results["application_category"] = results.apply(
+        lambda college: classify_application_category(college, college["match_score"]), axis=1
+    )
+
+    reaches, targets, safeties = build_recommendation_lists(results)
+    return jsonify({"reaches": reaches, "targets": targets, "safeties": safeties})
+
+
+@app.route("/recommendations")
+def recommendations_page():
+    return send_from_directory(BASE_DIR, "recommendations.html")
 
 
 @app.route("/college/<slug>")
