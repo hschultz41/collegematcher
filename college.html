@@ -97,6 +97,11 @@
     .match-medium { color: #c05621; }
     .match-low { color: #c53030; }
 
+    .category-safety { color: #2f855a; }
+    .category-target { color: #2b6cb0; }
+    .category-reach { color: #c05621; }
+    .category-hard-reach { color: #c53030; }
+
     .admissions-section {
       padding-top: 1.25rem;
       border-top: 1px solid #e2e8f0;
@@ -228,6 +233,10 @@
         <div id="match-score-block" style="display:none">
           <div class="stat-label">Your Match Score</div>
           <div class="stat-value" id="college-match-score"></div>
+        </div>
+        <div id="application-category-block" style="display:none">
+          <div class="stat-label">Application Category</div>
+          <div class="stat-value" id="college-application-category"></div>
         </div>
       </div>
       <div class="admissions-section">
@@ -380,6 +389,20 @@
               : "match-low"
           );
           document.getElementById("match-score-block").style.display = "block";
+        }
+
+        if (college.application_category) {
+          const categoryClasses = {
+            "Hard Reach": "category-hard-reach",
+            Reach: "category-reach",
+            Target: "category-target",
+            Safety: "category-safety",
+          };
+          const categoryEl = document.getElementById("college-application-category");
+          categoryEl.textContent = college.application_category;
+          categoryEl.classList.remove("category-hard-reach", "category-reach", "category-target", "category-safety");
+          categoryEl.classList.add(categoryClasses[college.application_category]);
+          document.getElementById("application-category-block").style.display = "block";
         }
 
         const ratingClasses = {

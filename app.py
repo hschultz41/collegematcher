@@ -144,6 +144,36 @@ def compute_match_score(college, profile):
     return round(weighted_total / weight_sum)
 
 
+# Tier-adjusted thresholds for classifying a school as a Hard Reach, Reach, Target, or Safety.
+# More selective tiers get a larger penalty since elite schools remain a "Reach"
+# for nearly everyone regardless of stats.
+TIER_PENALTY = {1: 60, 2: 45, 3: 30, 4: 15, 5: 0}
+
+
+def classify_application_category(college, match_score):
+    if match_score is None:
+        return None
+
+    tier = int(college["tier"])
+    adjusted_score = match_score - TIER_PENALTY.get(tier, 30)
+
+    if adjusted_score >= 75:
+        category = "Safety"
+    elif adjusted_score >= 50:
+        category = "Target"
+    elif adjusted_score >= 20:
+        category = "Reach"
+    else:
+        category = "Hard Reach"
+
+    # The most selective schools (Tier 1-2) are never a Target or Safety,
+    # no matter how strong a student's stats are.
+    if tier <= 2 and category in ("Safety", "Target"):
+        category = "Reach"
+
+    return category
+
+
 colleges_df = pd.read_csv(os.path.join(BASE_DIR, "colleges.csv"))
 colleges_df["slug"] = colleges_df["name"].apply(slugify)
 colleges_df["admissions_factors_dict"] = colleges_df.apply(build_admissions_factors, axis=1)
@@ -178,11 +208,14 @@ def match_colleges():
 
     profile = {**data, "gpa": gpa}
     results["match_score"] = results.apply(lambda college: compute_match_score(college, profile), axis=1)
+    results["application_category"] = results.apply(
+        lambda college: classify_application_category(college, college["match_score"]), axis=1
+    )
     results = results.sort_values("match_score", ascending=False)
 
-    matches = results[["name", "slug", "location", "gpa_25", "gpa_75", "type", "match_score"]].to_dict(
-        orient="records"
-    )
+    matches = results[
+        ["name", "slug", "location", "gpa_25", "gpa_75", "type", "match_score", "application_category"]
+    ].to_dict(orient="records")
     return jsonify({"matches": matches, "total": len(matches)})
 
 
@@ -210,6 +243,7 @@ def college_detail(slug):
         "rigorOffered": request.args.get("rigorOffered"),
         "highSchoolType": request.args.get("highSchoolType"),
     }
+    match_score = compute_match_score(college, profile)
     return jsonify({
         "name": college["name"],
         "slug": college["slug"],
@@ -223,7 +257,8 @@ def college_detail(slug):
         "test_optional": college["test_optional"] == "Yes",
         "type": college["type"],
         "admissions_factors": college["admissions_factors_dict"],
-        "match_score": compute_match_score(college, profile),
+        "match_score": match_score,
+        "application_category": classify_application_category(college, match_score),
     })
 
 
