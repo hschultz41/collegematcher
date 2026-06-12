@@ -1,6 +1,31 @@
-# collegematcher
-CS 199P project
-npm --vers
+# College Matcher
+
+CS 199P project — a Flask + vanilla JS app that helps a student figure out which colleges fit their academic profile.
+
+## Running it
+
+```
+pip install -r requirements.txt
+python3 app.py
+```
+
+Then open http://localhost:8080.
+
+## Pages
+
+- **Search** (`/`) — enter your GPA, test scores, and academic profile to get a Match Score and Reach/Target/Safety category for every school.
+- **My List** (`/recommendations`) — a balanced application list (Reach, Target, Safety) generated from your saved profile.
+- **Decisions** (`/decisions`) — randomized admissions-decision simulation for your application list.
+- **Browse** (`/browse`) — browse all 70 schools with filters for location, public/private, and test-optional policy (no profile needed).
+- **Map** (`/map`) — every school plotted on a map of the US, color-coded by application category if you have a saved profile.
+- **Compare** (`/compare`) — pick two schools to see them side by side, including admissions factors and which one you'd have a better chance at.
+- **College detail** (`/college/<slug>`) — full admissions stats and factor breakdown for a single school.
+
+A shared nav bar at the top of every page links between all of these.
+
+## Data
+
+`colleges.csv` holds 70 schools with admitted-student GPA/SAT/ACT ranges, location, type, selectivity tier, Common Data Set Section C7 admissions-factor ratings, and lat/lng coordinates for the map.
 
 ## How the Match Score Works
 
