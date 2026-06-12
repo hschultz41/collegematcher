@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Schools – College Matcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    .wrapper { max-width: 900px; }
+    .back-link, .page-header { max-width: 900px; margin-left: auto; margin-right: auto; }
+    .back-link { display: block; }
+
+    .compare-picker { margin-bottom: 1.5rem; }
+
+    .compare-picker-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    .compare-picker-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .compare-vs {
+      font-family: "Poppins", sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      padding-bottom: 0.7rem;
+    }
+
+    #error-msg { text-align: center; margin-bottom: 1rem; }
+
+    .chance-banner {
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      background: var(--surface);
+      padding: 1.1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .chance-banner strong { color: var(--primary-dark); }
+
+    .chance-banner-muted {
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .chance-banner-muted a { color: var(--primary); font-weight: 600; }
+
+    .compare-grid {
+      display: flex;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .compare-col { flex: 1 1 0; min-width: 0; }
+
+    .compare-col h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+
+    .compare-col .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge-lg { font-size: 0.9rem; padding: 0.35rem 0.85rem; }
+
+    .compare-stat {
+      padding: 0.85rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      font-family: "Poppins", sans-serif;
+      color: var(--primary-dark);
+    }
+
+    .stat-value-sm { font-size: 0.95rem; }
+
+    .stat-value.level-high { color: var(--safety); }
+    .stat-value.level-medium { color: var(--reach); }
+    .stat-value.level-low { color: var(--hardreach); }
+
+    .match-meter-block { margin-top: 0.5rem; width: 130px; }
+
+    .factors-card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.85rem;
+    }
+
+    .factors-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .factors-table th, .factors-table td {
+      padding: 0.6rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--bg-grad-end);
+    }
+
+    .factors-table th {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .factors-table tr:last-child td { border-bottom: none; }
+
+    .factor-name-cell { color: var(--text-secondary); }
+
+    .factor-rating {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.22rem 0.7rem;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+    }
+
+    .rating-very-important {
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(91, 95, 236, 0.35);
+    }
+    .rating-important { background: var(--accent); color: white; font-weight: 700; }
+    .rating-considered { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+    .rating-not-considered { background: #f3f4f8; color: var(--text-muted); font-weight: 500; }
+
+    @media (max-width: 640px) {
+      .compare-picker-row { flex-direction: column; align-items: stretch; }
+      .compare-vs { display: none; }
+      .compare-grid { flex-direction: column; }
+
+      .factors-table {
+        font-size: 0.78rem;
+        table-layout: fixed;
+      }
+
+      .factors-table th, .factors-table td { padding: 0.5rem 0.3rem; }
+      .factors-table th:first-child, .factors-table td:first-child { width: 34%; }
+      .factors-table th:not(:first-child), .factors-table td:not(:first-child) { width: 33%; }
+
+      .factor-rating {
+        display: inline-block;
+        white-space: normal;
+        text-align: center;
+        font-size: 0.68rem;
+        padding: 0.2rem 0.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <a href="/" class="back-link">&larr; Back to search</a>
+    <header class="page-header">
+      <h1>Compare Schools</h1>
+      <p>See how two schools stack up side by side</p>
+    </header>
+
+    <div class="card compare-picker">
+      <div class="compare-picker-row">
+        <div class="form-group">
+          <label for="school-a-select">School A</label>
+          <select id="school-a-select"></select>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="form-group">
+          <label for="school-b-select">School B</label>
+          <select id="school-b-select"></select>
+        </div>
+      </div>
+    </div>
+
+    <p id="status-msg">Loading schools…</p>
+    <p id="error-msg" style="display:none"></p>
+
+    <div id="compare-content" style="display:none">
+      <div class="chance-banner" id="chance-banner"></div>
+
+      <div class="compare-grid">
+        <div class="card compare-col" id="college-a"></div>
+        <div class="card compare-col" id="college-b"></div>
+      </div>
+
+      <div class="card factors-card">
+        <h2>Admissions Factors</h2>
+        <table class="factors-table">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th id="factors-head-a"></th>
+              <th id="factors-head-b"></th>
+            </tr>
+          </thead>
+          <tbody id="factors-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PROFILE_KEY = "collegeMatcherProfile";
+
+    const CATEGORY_BADGE_CLASSES = {
+      "Hard Reach": "category-badge-hard-reach",
+      Reach: "category-badge-reach",
+      Target: "category-badge-target",
+      Safety: "category-badge-safety",
+    };
+
+    const CATEGORY_ICONS = {
+      "Hard Reach": "🔥",
+      Reach: "🚀",
+      Target: "🎯",
+      Safety: "🛡️",
+    };
+
+    // Lower rank = better chance of admission.
+    const CATEGORY_RANK = { Safety: 0, Target: 1, Reach: 2, "Hard Reach": 3 };
+
+    const RATING_CLASSES = {
+      "Very Important": "rating-very-important",
+      "Important": "rating-important",
+      "Considered": "rating-considered",
+      "Not Considered": "rating-not-considered",
+    };
+
+    function loadStudentProfile() {
+      const saved = localStorage.getItem(PROFILE_KEY);
+      if (!saved) return null;
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
+
+    function buildProfileParams(profile) {
+      const params = new URLSearchParams();
+      if (profile) {
+        Object.entries(profile).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            params.set(key, value);
+          }
+        });
+      }
+      return params;
+    }
+
+    async function loadSchoolOptions() {
+      const res = await fetch("/api/schools");
+      const data = await res.json();
+      const schools = [...data.schools].sort((a, b) => a.name.localeCompare(b.name));
+
+      const selectA = document.getElementById("school-a-select");
+      const selectB = document.getElementById("school-b-select");
+
+      schools.forEach(school => {
+        [selectA, selectB].forEach(select => {
+          const opt = document.createElement("option");
+          opt.value = school.slug;
+          opt.textContent = school.name;
+          select.appendChild(opt);
+        });
+      });
+
+      if (schools.length >= 2) {
+        selectA.value = schools[0].slug;
+        selectB.value = schools[1].slug;
+      }
+    }
+
+    function renderCollegeColumn(college) {
+      const testBadge = college.test_optional
+        ? `<span class="badge badge-test-optional">Test-Optional</span>`
+        : `<span class="badge badge-test-required">Test-Required</span>`;
+
+      let matchBlock = "";
+      if (college.match_score !== null && college.match_score !== undefined) {
+        const level = college.match_score >= 75 ? "high" : college.match_score >= 50 ? "medium" : "low";
+        const categoryClass = CATEGORY_BADGE_CLASSES[college.application_category] || "";
+        const categoryIcon = CATEGORY_ICONS[college.application_category] || "";
+        matchBlock = `
+          <div class="compare-stat">
+            <div class="stat-label">Your Match Score</div>
+            <div class="stat-value level-${level}">${college.match_score}%</div>
+            <div class="match-meter match-meter-block ${level}">
+              <div class="match-meter-track"><div class="match-meter-fill" style="width:${college.match_score}%"></div></div>
+            </div>
+          </div>
+          <div class="compare-stat">
+            <div class="stat-label">Application Category</div>
+            <span class="badge badge-lg ${categoryClass}">${categoryIcon} ${college.application_category}</span>
+          </div>
+        `;
+      }
+
+      return `
+        <h3>${college.name}</h3>
+        <div class="meta">
+          <span class="badge badge-location">${college.location}</span>
+          <span class="badge badge-type">${college.type}</span>
+          ${testBadge}
+        </div>
+        <div class="compare-stat">
+          <div class="stat-label">GPA Range (Mid 50%)</div>
+          <div class="stat-value">${college.gpa_25.toFixed(2)}&ndash;${college.gpa_75.toFixed(2)}</div>
+        </div>
+        <div class="compare-stat">
+          <div class="stat-label">Test Score Range (Mid 50%)</div>
+          <div class="stat-value stat-value-sm">SAT ${college.sat_25}&ndash;${college.sat_75} / ACT ${college.act_25}&ndash;${college.act_75}</div>
+        </div>
+        ${matchBlock}
+      `;
+    }
+
+    function renderFactorsTable(collegeA, collegeB) {
+      document.getElementById("factors-head-a").textContent = collegeA.name;
+      document.getElementById("factors-head-b").textContent = collegeB.name;
+
+      const body = document.getElementById("factors-body");
+      body.innerHTML = "";
+
+      Object.entries(collegeA.admissions_factors).forEach(([factor, ratingA]) => {
+        const ratingB = collegeB.admissions_factors[factor];
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="factor-name-cell">${factor}</td>
+          <td><span class="factor-rating ${RATING_CLASSES[ratingA] || "rating-considered"}">${ratingA}</span></td>
+          <td><span class="factor-rating ${RATING_CLASSES[ratingB] || "rating-considered"}">${ratingB}</span></td>
+        `;
+        body.appendChild(row);
+      });
+    }
+
+    function renderChanceBanner(collegeA, collegeB, hasProfile) {
+      const banner = document.getElementById("chance-banner");
+
+      if (!hasProfile || collegeA.match_score == null || collegeB.match_score == null) {
+        banner.className = "chance-banner chance-banner-muted";
+        banner.innerHTML = 'Save your profile on the <a href="/">search page</a> to see your personalized chances at each school.';
+        return;
+      }
+
+      banner.className = "chance-banner";
+
+      const rankA = CATEGORY_RANK[collegeA.application_category];
+      const rankB = CATEGORY_RANK[collegeB.application_category];
+
+      let winner = null;
+      let loser = null;
+      if (rankA < rankB || (rankA === rankB && collegeA.match_score > collegeB.match_score)) {
+        winner = collegeA;
+        loser = collegeB;
+      } else if (rankB < rankA || (rankA === rankB && collegeB.match_score > collegeA.match_score)) {
+        winner = collegeB;
+        loser = collegeA;
+      }
+
+      if (!winner) {
+        banner.innerHTML = `⚖️ Based on your profile, you have a <strong>similar chance</strong> at both schools — both are ${CATEGORY_ICONS[collegeA.application_category]} ${collegeA.application_category} for you.`;
+        return;
+      }
+
+      banner.innerHTML = `${CATEGORY_ICONS[winner.application_category]} Based on your profile, you have a <strong>better chance at ${winner.name}</strong> (${winner.application_category}, ${winner.match_score}% match) than at <strong>${loser.name}</strong> (${loser.application_category}, ${loser.match_score}% match).`;
+    }
+
+    async function compareSchools() {
+      const slugA = document.getElementById("school-a-select").value;
+      const slugB = document.getElementById("school-b-select").value;
+      const statusMsg = document.getElementById("status-msg");
+      const errorMsg = document.getElementById("error-msg");
+      const content = document.getElementById("compare-content");
+
+      errorMsg.style.display = "none";
+
+      if (!slugA || !slugB) return;
+
+      if (slugA === slugB) {
+        content.style.display = "none";
+        errorMsg.textContent = "Please select two different schools to compare.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      const profile = loadStudentProfile();
+      const hasProfile = !!(profile && profile.gpa);
+      const params = buildProfileParams(profile);
+      const query = params.toString() ? `?${params}` : "";
+
+      try {
+        const [resA, resB] = await Promise.all([
+          fetch(`/api/college/${slugA}${query}`),
+          fetch(`/api/college/${slugB}${query}`),
+        ]);
+
+        if (!resA.ok || !resB.ok) {
+          errorMsg.textContent = "Could not load one of the selected schools.";
+          errorMsg.style.display = "block";
+          return;
+        }
+
+        const [collegeA, collegeB] = await Promise.all([resA.json(), resB.json()]);
+
+        document.getElementById("college-a").innerHTML = renderCollegeColumn(collegeA);
+        document.getElementById("college-b").innerHTML = renderCollegeColumn(collegeB);
+        renderFactorsTable(collegeA, collegeB);
+        renderChanceBanner(collegeA, collegeB, hasProfile);
+
+        statusMsg.style.display = "none";
+        content.style.display = "block";
+      } catch {
+        errorMsg.textContent = "Could not reach the server. Is python3 app.py running?";
+        errorMsg.style.display = "block";
+      }
+    }
+
+    document.getElementById("school-a-select").addEventListener("change", compareSchools);
+    document.getElementById("school-b-select").addEventListener("change", compareSchools);
+
+    loadSchoolOptions().then(compareSchools);
+  </script>
+</body>
+</html>

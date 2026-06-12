@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Schools – College Matcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    .wrapper { max-width: 760px; }
+    .back-link, .page-header { max-width: 760px; margin-left: auto; margin-right: auto; }
+    .back-link { display: block; }
+
+    .filter-card { margin-bottom: 1.5rem; }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filter-row .form-group {
+      flex: 1 1 160px;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <a href="/" class="back-link">&larr; Back to search</a>
+    <header class="page-header">
+      <h1>Browse All Schools</h1>
+      <p>Filter the full list of schools in our database</p>
+    </header>
+
+    <div class="card filter-card">
+      <div class="filter-row">
+        <div class="form-group">
+          <label for="search-input">Search by name</label>
+          <input type="text" id="search-input" placeholder="e.g. Stanford" />
+        </div>
+        <div class="form-group">
+          <label for="location-filter">Location</label>
+          <select id="location-filter">
+            <option value="Any">Any location</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="type-filter">Type</label>
+          <select id="type-filter">
+            <option value="Any">Public or Private</option>
+            <option value="Public">Public</option>
+            <option value="Private">Private</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="test-filter">Testing Policy</label>
+          <select id="test-filter">
+            <option value="Any">Any</option>
+            <option value="Optional">Test-Optional</option>
+            <option value="Required">Test-Required</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <p id="status-msg">Loading schools…</p>
+
+    <section id="results-section" style="display:none">
+      <p id="results-header"></p>
+      <div id="results-list"></div>
+      <p id="no-results">No schools matched your filters. Try adjusting them.</p>
+    </section>
+  </div>
+
+  <script>
+    let allSchools = [];
+
+    async function loadOptions() {
+      const res = await fetch("/api/options");
+      const data = await res.json();
+
+      const locSel = document.getElementById("location-filter");
+      data.locations.forEach(l => {
+        if (l === "Any") return;
+        const opt = document.createElement("option");
+        opt.value = l;
+        opt.textContent = l;
+        locSel.appendChild(opt);
+      });
+    }
+
+    function renderSchool(school) {
+      const card = document.createElement("a");
+      card.className = "college-card";
+      card.href = `/college/${school.slug}`;
+
+      const testBadge = school.test_optional
+        ? `<span class="badge badge-test-optional">Test-Optional</span>`
+        : `<span class="badge badge-test-required">Test-Required</span>`;
+
+      card.innerHTML = `
+        <div class="college-info">
+          <h3>${school.name}</h3>
+          <div class="college-meta">
+            <span class="badge badge-location">${school.location}</span>
+            <span class="badge badge-type">${school.type}</span>
+            ${testBadge}
+          </div>
+        </div>
+        <div class="college-stats">
+          <div class="college-gpa">
+            <div class="gpa-label">GPA Range (Mid 50%)</div>
+            <div class="gpa-value">${school.gpa_25.toFixed(2)}&ndash;${school.gpa_75.toFixed(2)}</div>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function applyFilters() {
+      const search = document.getElementById("search-input").value.trim().toLowerCase();
+      const location = document.getElementById("location-filter").value;
+      const type = document.getElementById("type-filter").value;
+      const test = document.getElementById("test-filter").value;
+
+      const filtered = allSchools.filter(school => {
+        if (search && !school.name.toLowerCase().includes(search)) return false;
+        if (location !== "Any" && school.location !== location) return false;
+        if (type !== "Any" && school.type !== type) return false;
+        if (test === "Optional" && !school.test_optional) return false;
+        if (test === "Required" && school.test_optional) return false;
+        return true;
+      });
+
+      const header = document.getElementById("results-header");
+      const list = document.getElementById("results-list");
+      const noResults = document.getElementById("no-results");
+
+      list.innerHTML = "";
+
+      if (filtered.length === 0) {
+        header.textContent = "";
+        noResults.style.display = "block";
+        return;
+      }
+
+      noResults.style.display = "none";
+      header.textContent = `Showing ${filtered.length} of ${allSchools.length} schools`;
+      filtered.forEach(school => list.appendChild(renderSchool(school)));
+    }
+
+    async function loadSchools() {
+      const statusMsg = document.getElementById("status-msg");
+
+      try {
+        const res = await fetch("/api/schools");
+        const data = await res.json();
+        allSchools = data.schools;
+
+        statusMsg.style.display = "none";
+        document.getElementById("results-section").style.display = "block";
+        applyFilters();
+      } catch {
+        statusMsg.textContent = "Could not reach the server. Is python3 app.py running?";
+      }
+    }
+
+    document.getElementById("search-input").addEventListener("input", applyFilters);
+    document.getElementById("location-filter").addEventListener("change", applyFilters);
+    document.getElementById("type-filter").addEventListener("change", applyFilters);
+    document.getElementById("test-filter").addEventListener("change", applyFilters);
+
+    loadOptions().then(loadSchools);
+  </script>
+</body>
+</html>

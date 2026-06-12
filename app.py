@@ -382,6 +382,16 @@ def map_page():
     return send_from_directory(BASE_DIR, "map.html")
 
 
+@app.route("/browse")
+def browse_page():
+    return send_from_directory(BASE_DIR, "browse.html")
+
+
+@app.route("/compare")
+def compare_page():
+    return send_from_directory(BASE_DIR, "compare.html")
+
+
 @app.route("/api/schools")
 def schools():
     results = colleges_df.copy()
@@ -397,7 +407,9 @@ def schools():
         "highSchoolType": request.args.get("highSchoolType"),
     }
 
-    columns = ["name", "slug", "location", "type", "gpa_25", "gpa_75", "lat", "lng"]
+    results["test_optional"] = results["test_optional"] == "Yes"
+
+    columns = ["name", "slug", "location", "type", "test_optional", "gpa_25", "gpa_75", "lat", "lng"]
     if any(profile.values()):
         results["match_score"] = results.apply(lambda college: compute_match_score(college, profile), axis=1)
         results["application_category"] = results.apply(
