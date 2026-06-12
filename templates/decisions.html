@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="/static/style.css" />
   <style>
     .wrapper { max-width: 760px; }
-    .back-link, .page-header { max-width: 760px; margin-left: auto; margin-right: auto; }
-    .back-link { display: block; }
+    .page-header { max-width: 760px; margin-left: auto; margin-right: auto; }
 
     .disclaimer {
       text-align: center;
@@ -80,8 +79,8 @@
   </style>
 </head>
 <body>
+  {% include "_nav.html" %}
   <div class="wrapper">
-    <a href="/recommendations" class="back-link">&larr; Back to application list</a>
     <header class="page-header">
       <h1>Decision Simulator</h1>
       <p>A randomized preview of how decisions might play out for your list</p>

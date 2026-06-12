@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="/static/style.css" />
   <style>
     .wrapper { max-width: 760px; }
-    .back-link, .page-header { max-width: 760px; margin-left: auto; margin-right: auto; }
-    .back-link { display: block; }
+    .page-header { max-width: 760px; margin-left: auto; margin-right: auto; }
 
     .filter-card { margin-bottom: 1.5rem; }
 
@@ -28,8 +27,8 @@
   </style>
 </head>
 <body>
+  {% include "_nav.html" %}
   <div class="wrapper">
-    <a href="/" class="back-link">&larr; Back to search</a>
     <header class="page-header">
       <h1>Browse All Schools</h1>
       <p>Filter the full list of schools in our database</p>

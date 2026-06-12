@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, abort
+from flask import Flask, request, jsonify, render_template, abort
 import pandas as pd
 import os
 import random
@@ -238,7 +238,7 @@ LOCATIONS = ["Any", "West", "Northeast", "Midwest", "Southeast", "South"]
 
 @app.route("/")
 def index():
-    return send_from_directory(BASE_DIR, "index.html")
+    return render_template("index.html", active="search")
 
 
 @app.route("/api/match", methods=["POST"])
@@ -299,7 +299,7 @@ def recommendations():
 
 @app.route("/recommendations")
 def recommendations_page():
-    return send_from_directory(BASE_DIR, "recommendations.html")
+    return render_template("recommendations.html", active="recommendations")
 
 
 @app.route("/api/simulate", methods=["POST"])
@@ -331,14 +331,14 @@ def simulate():
 
 @app.route("/decisions")
 def decisions_page():
-    return send_from_directory(BASE_DIR, "decisions.html")
+    return render_template("decisions.html", active="decisions")
 
 
 @app.route("/college/<slug>")
 def college_page(slug):
     if slug not in colleges_df["slug"].values:
         abort(404)
-    return send_from_directory(BASE_DIR, "college.html")
+    return render_template("college.html", active=None)
 
 
 @app.route("/api/college/<slug>")
@@ -379,17 +379,17 @@ def college_detail(slug):
 
 @app.route("/map")
 def map_page():
-    return send_from_directory(BASE_DIR, "map.html")
+    return render_template("map.html", active="map")
 
 
 @app.route("/browse")
 def browse_page():
-    return send_from_directory(BASE_DIR, "browse.html")
+    return render_template("browse.html", active="browse")
 
 
 @app.route("/compare")
 def compare_page():
-    return send_from_directory(BASE_DIR, "compare.html")
+    return render_template("compare.html", active="compare")
 
 
 @app.route("/api/schools")

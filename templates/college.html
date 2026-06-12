@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="/static/style.css" />
   <style>
     .wrapper { max-width: 640px; }
-    .back-link { max-width: 640px; margin-left: auto; margin-right: auto; display: block; }
 
     h1 {
       font-size: 1.75rem;
@@ -152,8 +151,8 @@
   </style>
 </head>
 <body>
+  {% include "_nav.html" %}
   <div class="wrapper">
-    <a href="/" class="back-link">&larr; Back to search</a>
     <p id="status-msg">Loading college details…</p>
     <div class="card" id="college-card" style="display:none">
       <h1 id="college-name"></h1>
