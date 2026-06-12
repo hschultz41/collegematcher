@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore Schools – College Matcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    .wrapper { max-width: 1000px; }
+    .back-link, .page-header { max-width: 1000px; margin-left: auto; margin-right: auto; }
+    .back-link { display: block; }
+
+    .map-legend {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .legend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface);
+      border-radius: var(--radius-pill);
+      padding: 0.4rem 0.9rem;
+      box-shadow: var(--shadow-card);
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .legend-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .legend-note a { color: var(--primary); font-weight: 600; }
+
+    #map {
+      height: min(70vh, 640px);
+      min-height: 380px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    #map .leaflet-tile-pane {
+      filter: saturate(0.6) brightness(1.05) contrast(0.95);
+    }
+
+    /* Popup styling to match the shared design system */
+    .leaflet-popup-content-wrapper {
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+    }
+
+    .leaflet-popup-content {
+      font-family: "Inter", sans-serif;
+      margin: 0.85rem 1rem;
+      min-width: 190px;
+    }
+
+    .popup-title {
+      font-family: "Poppins", sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .popup-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .popup-category { margin-bottom: 0.5rem; }
+
+    .popup-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .popup-link:hover { color: var(--primary-dark); }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <a href="/" class="back-link">&larr; Back to search</a>
+    <header class="page-header">
+      <h1>Explore Schools on the Map</h1>
+      <p>Every school in our database, plotted across the United States</p>
+    </header>
+
+    <p id="status-msg">Loading schools…</p>
+    <div class="map-legend" id="map-legend"></div>
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const PROFILE_KEY = "collegeMatcherProfile";
+
+    const CATEGORY_COLORS = {
+      Safety: "#10b981",
+      Target: "#6366f1",
+      Reach: "#f59e0b",
+      "Hard Reach": "#f43f5e",
+    };
+
+    const CATEGORY_BADGE_CLASSES = {
+      "Hard Reach": "category-badge-hard-reach",
+      Reach: "category-badge-reach",
+      Target: "category-badge-target",
+      Safety: "category-badge-safety",
+    };
+
+    const CATEGORY_ICONS = {
+      "Hard Reach": "🔥",
+      Reach: "🚀",
+      Target: "🎯",
+      Safety: "🛡️",
+    };
+
+    const NEUTRAL_COLOR = "#5b5fec";
+
+    function loadStudentProfile() {
+      const saved = localStorage.getItem(PROFILE_KEY);
+      if (!saved) return null;
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return null;
+      }
+    }
+
+    function buildLegend(hasProfile) {
+      const legend = document.getElementById("map-legend");
+
+      if (!hasProfile) {
+        legend.innerHTML = `
+          <span class="legend-chip">
+            <span class="legend-dot" style="background:${NEUTRAL_COLOR}"></span>
+            🎓 School
+          </span>
+          <span class="legend-note">Save your <a href="/">academic profile</a> to see personalized match categories on the map.</span>
+        `;
+        return;
+      }
+
+      legend.innerHTML = Object.entries(CATEGORY_ICONS).map(([category, icon]) => `
+        <span class="legend-chip">
+          <span class="legend-dot" style="background:${CATEGORY_COLORS[category]}"></span>
+          ${icon} ${category}
+        </span>
+      `).join("");
+    }
+
+    function popupHTML(school) {
+      let categoryBlock = "";
+      if (school.application_category) {
+        const categoryClass = CATEGORY_BADGE_CLASSES[school.application_category] || "";
+        const categoryIcon = CATEGORY_ICONS[school.application_category] || "";
+        categoryBlock = `
+          <div class="popup-category">
+            <span class="badge ${categoryClass}">${categoryIcon} ${school.application_category} · ${school.match_score}% match</span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="popup-title">${school.name}</div>
+        <div class="popup-meta">
+          <span class="badge badge-location">${school.location}</span>
+          <span class="badge badge-type">${school.type}</span>
+        </div>
+        ${categoryBlock}
+        <a class="popup-link" href="/college/${school.slug}">View details &rarr;</a>
+      `;
+    }
+
+    async function loadMap() {
+      const statusMsg = document.getElementById("status-msg");
+      const profile = loadStudentProfile();
+      const hasProfile = !!(profile && profile.gpa);
+
+      buildLegend(hasProfile);
+
+      const params = new URLSearchParams();
+      if (hasProfile) {
+        Object.entries(profile).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            params.set(key, value);
+          }
+        });
+      }
+
+      try {
+        const res = await fetch(`/api/schools${params.toString() ? `?${params}` : ""}`);
+        const data = await res.json();
+
+        const map = L.map("map", { scrollWheelZoom: false }).setView([39.5, -98.35], 4);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 18,
+        }).addTo(map);
+
+        data.schools.forEach(school => {
+          const color = CATEGORY_COLORS[school.application_category] || NEUTRAL_COLOR;
+          L.circleMarker([school.lat, school.lng], {
+            radius: 7,
+            weight: 2,
+            color: "#ffffff",
+            fillColor: color,
+            fillOpacity: 0.9,
+          })
+            .addTo(map)
+            .bindPopup(popupHTML(school));
+        });
+
+        statusMsg.style.display = "none";
+      } catch {
+        statusMsg.textContent = "Could not reach the server. Is python3 app.py running?";
+      }
+    }
+
+    loadMap();
+  </script>
+</body>
+</html>

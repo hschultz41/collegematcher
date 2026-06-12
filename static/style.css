@@ -166,7 +166,27 @@ h1, h2, h3 { font-family: "Poppins", "Inter", sans-serif; }
   transform: none;
 }
 
+.btn-secondary {
+  background: var(--surface);
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid var(--primary-light);
+}
+
+.btn-secondary:hover {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-card-hover);
+}
+
 .btn-block { display: flex; width: 100%; }
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
 
 .nav-link-center {
   display: flex;

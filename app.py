@@ -377,6 +377,38 @@ def college_detail(slug):
     })
 
 
+@app.route("/map")
+def map_page():
+    return send_from_directory(BASE_DIR, "map.html")
+
+
+@app.route("/api/schools")
+def schools():
+    results = colleges_df.copy()
+
+    profile = {
+        "gpa": request.args.get("gpa"),
+        "testType": request.args.get("testType"),
+        "testScore": request.args.get("testScore"),
+        "classRank": request.args.get("classRank"),
+        "extracurriculars": request.args.get("extracurriculars"),
+        "rigorCourses": request.args.get("rigorCourses"),
+        "rigorOffered": request.args.get("rigorOffered"),
+        "highSchoolType": request.args.get("highSchoolType"),
+    }
+
+    columns = ["name", "slug", "location", "type", "gpa_25", "gpa_75", "lat", "lng"]
+    if any(profile.values()):
+        results["match_score"] = results.apply(lambda college: compute_match_score(college, profile), axis=1)
+        results["application_category"] = results.apply(
+            lambda college: classify_application_category(college, college["match_score"]), axis=1
+        )
+        results["match_score"] = results["match_score"].astype(object).where(results["match_score"].notna(), None)
+        columns += ["match_score", "application_category"]
+
+    return jsonify({"schools": results[columns].to_dict(orient="records")})
+
+
 @app.route("/api/options")
 def get_options():
     return jsonify({"locations": LOCATIONS})
